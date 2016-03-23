@@ -1,6 +1,6 @@
 # IISIdro Server
 
-La aplicación fue construida utilizando **JHipster**, la documentación de esta herramienta se encuentra en: https://jhipster.github.io](https://jhipster.github.io).
+La aplicación fue construida utilizando **JHipster**, la documentación de esta herramienta se encuentra en: [https://jhipster.github.io](https://jhipster.github.io).
 
 Antes de levantar el proyecto debes installar y configurar las siguientes dependencias:
 
