@@ -1,3 +1,5 @@
+[![Stories in Ready](https://badge.waffle.io/iisidro/iisidro-server.png?label=ready&title=Ready)](https://waffle.io/iisidro/iisidro-server)
+
 # IISIdro Server
 
 La aplicación fue construida utilizando **JHipster**, la documentación de esta herramienta se encuentra disponible en: [https://jhipster.github.io](https://jhipster.github.io).
