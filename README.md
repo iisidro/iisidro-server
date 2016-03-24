@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/iisidro/iisidro-server.png?label=ready&title=Ready)](https://waffle.io/iisidro/iisidro-server)
 # iisidro-server
 
 ## TODO: translate to Spanish
