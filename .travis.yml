@@ -1,3 +1,10 @@
 language: java
 jdk:
 - oraclejdk8
+deploy:
+  provider: heroku
+  app: iisidro-server
+  api_key:
+    secure: bYltB3j0T5I8/BldSVT2+TJ4XW+qnARl8fnIfU6ArCtVa6Tu1QMxPCF+5+JkntogZ6RHzhmijVHIOnFDALUMpcen2gXSf6gZ/1FBfTTsiHSAKgY839eDUlbFRMVfD+HnqDyJmElpmjyumABPrGA+3DFwdX+0IxLKYD4MdzXqPFPnuA6Dg8uuaKCuycNKdNUg+SUhzvNKNWSunw/jF1C+VBUvcTE2SMMbV9eDJpEQLqxT9vbGVCZoRn31FkiFk4O+udP+vYpuxCB7rRpPOvUwuGkLNfGXLtdhrCtskOAObxXzca0FQ5e+y/GRjdqTRXq32ObkRYCSZeATK7kfBqY4H7QJVT+PecGbYICvCNsbvLmoaH2NqdoWy3oKVCbk+ADa80rn7ow/MaIEk6y2EVVj5b3Q3RfOdBXmzl5ymC0wOin2tugNifuDow37Cd6dyamIeusNG9pAF6arcZDaN02I7jIF7lXNUP5+LdsKbtiuaEUb7dsv5QnaZX77ou08pdtpgDlT9plPHIp1yB9OvVotlu8iH97NNhL025nDq9FW5VGRZnRki4HP2sJReFlxNq4JlRLEohPwp+rcCjGrbYD7hdlpeJWhisBKqY7/0cVbyS0hNRttGWDbVQ0nVaT1WKSloaxAuSrFVIAvJJCSKCm0VP/HmBRGAW+Q7rolGZAejxg=
+  on:
+    repo: iisidro/iisidro-server
