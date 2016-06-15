@@ -18,20 +18,6 @@ spring:
             enabled: false
         livereload:
             enabled: false
-    datasource:
-        driver-class-name: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
-        url: jdbc:mysql://localhost:3306/iisidro?useUnicode=true&characterEncoding=utf8
-        name:
-        username: root
-        password:
-    jpa:
-        database-platform: org.hibernate.dialect.MySQLInnoDBDialect
-        database: MYSQL
-        show_sql: false
-        properties:
-            hibernate.cache.use_second_level_cache: false
-            hibernate.cache.use_query_cache: false
-            hibernate.generate_statistics: false
     data:
         elasticsearch:
             cluster-name:
