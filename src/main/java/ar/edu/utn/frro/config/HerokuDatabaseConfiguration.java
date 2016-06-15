@@ -1,5 +1,7 @@
 package ar.edu.utn.frro.config;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -22,31 +24,18 @@ public class HerokuDatabaseConfiguration {
 
 	@Bean
 	public DataSource dataSource(DataSourceProperties dataSourceProperties,
-			JHipsterProperties jHipsterProperties) {
+			JHipsterProperties jHipsterProperties) throws URISyntaxException {
 		log.debug("Configuring Heroku Datasource");
 
-		String herokuUrl = System.getenv("DATABASE_URL");
-		if (herokuUrl != null) {
-			log.info("Web application on Heroku, using database url: {}", herokuUrl);
+		String herokuDatabaseUrl = System.getenv("DATABASE_URL");
+		if (herokuDatabaseUrl != null) {
+			java.net.URI databaseURI = new URI(herokuDatabaseUrl);
+			String jdbcDatabaseURL = "jdbc:postgresql://" + databaseURI.getHost() + ':' + databaseURI.getPort() + databaseURI.getPath();
+			log.info("Web application on Heroku, using jdbc database url: {}", jdbcDatabaseURL);
 			HikariConfig config = new HikariConfig();
-
-			// MySQL optimizations, see
-			// https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration
-			if ("com.mysql.jdbc.jdbc2.optional.MysqlDataSource"
-					.equals(dataSourceProperties.getDriverClassName())) {
-				config.addDataSourceProperty("cachePrepStmts",
-						jHipsterProperties.getDatasource().isCachePrepStmts());
-				config.addDataSourceProperty("prepStmtCacheSize",
-						jHipsterProperties.getDatasource()
-								.getPrepStmtCacheSize());
-				config.addDataSourceProperty("prepStmtCacheSqlLimit",
-						jHipsterProperties.getDatasource()
-								.getPrepStmtCacheSqlLimit());
-			}
-
 			config.setDataSourceClassName(dataSourceProperties
 					.getDriverClassName());
-			config.addDataSourceProperty("url", herokuUrl);
+			config.addDataSourceProperty("url", jdbcDatabaseURL);
 			return new HikariDataSource(config);
 		} else {
 			throw new ApplicationContextException(

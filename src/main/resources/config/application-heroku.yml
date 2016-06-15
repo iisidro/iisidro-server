@@ -13,6 +13,9 @@
 spring:
     profiles:
         active: heroku
+    datasource:
+        maximumPoolSize: 5
+        driver-class-name: org.postgresql.Driver
     jpa:
         database-platform: org.hibernate.dialect.PostgreSQLDialect 
         show_sql: false
