@@ -26,21 +26,16 @@ public class HerokuDatabaseConfiguration {
 	@Bean
 	public DataSource dataSource(DataSourceProperties dataSourceProperties,
 			JHipsterProperties jHipsterProperties) throws URISyntaxException {
-		log.debug("Configuring Heroku Datasource");
+		String jdbcDatabaseUrl = System.getenv("JDBC_DATABASE_URL");
 
-		String herokuDatabaseUrl = System.getenv("DATABASE_URL");
-		if (herokuDatabaseUrl != null) {
+		if (jdbcDatabaseUrl != null) {
 			HikariConfig config = new HikariConfig();
-			java.net.URI databaseURI = new URI(herokuDatabaseUrl);
-			String jdbcDatabaseURL = "jdbc:postgresql://"
-					+ databaseURI.getHost() + ':' + databaseURI.getPort()
-					+ databaseURI.getPath();
-			String username = databaseURI.getUserInfo().split(":")[0];
-			String password = databaseURI.getUserInfo().split(":")[1];
+			String username = System.getenv("JDBC_DATABASE_USERNAME");
+			String password = System.getenv("JDBC_DATABASE_PASSWORD");
 
 			config.setDataSourceClassName(dataSourceProperties
 					.getDriverClassName());
-			config.addDataSourceProperty("url", jdbcDatabaseURL);
+			config.addDataSourceProperty("url", jdbcDatabaseUrl);
 			config.addDataSourceProperty("user", username);
 			config.addDataSourceProperty("password", password);
 
