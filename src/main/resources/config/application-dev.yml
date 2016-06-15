@@ -17,7 +17,7 @@ spring:
         restart:
             enabled: true
         livereload:
-            enabled: false # we use Grunt + BrowserSync for livereload
+            enabled: true # we use Grunt + BrowserSync for livereload
     datasource:
         driver-class-name: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
         url: jdbc:mysql://localhost:3306/iisidro?useUnicode=true&characterEncoding=utf8
