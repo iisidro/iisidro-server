@@ -49,18 +49,17 @@ jhipster:
         from: iisidro@localhost
     security:
         authentication:
-            oauth:
-                clientid: iisidroapp
-                secret: mySecretOAuthSecret
+            xauth:
+                secret: myXAuthSecret
                 # Token is valid 30 minutes
                 tokenValidityInSeconds: 1800
         rememberme:
             # security key (this key should be unique for your application, and kept secret)
-            key: 43285e8e8e05d1afca1e7321ee9972994167ec18
+            key: 7d5c55dd0b917f9ad8b288cea91c53331f51f89b
     swagger:
         title: iisidro API
         description: iisidro API documentation
-        version: 1.0.1
+        version: 0.0.1
         termsOfServiceUrl:
         contact:
         license:

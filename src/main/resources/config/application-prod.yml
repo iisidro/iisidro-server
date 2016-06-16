@@ -18,10 +18,20 @@ spring:
             enabled: false
         livereload:
             enabled: false
-    data:
-        elasticsearch:
-            cluster-name:
-            cluster-nodes: localhost:9300
+    datasource:
+        driver-class-name: org.postgresql.ds.PGSimpleDataSource
+        url: jdbc:postgresql://localhost:5432/iisidro
+        name:
+        username: iisidro
+        password:
+    jpa:
+        database-platform: ar.edu.utn.frro.domain.util.FixedPostgreSQL82Dialect
+        database: POSTGRESQL
+        show_sql: false
+        properties:
+            hibernate.cache.use_second_level_cache: false
+            hibernate.cache.use_query_cache: false
+            hibernate.generate_statistics: false
     mail:
         host: localhost
         port: 25
