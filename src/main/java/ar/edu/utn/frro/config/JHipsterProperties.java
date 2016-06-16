@@ -212,27 +212,17 @@ public class JHipsterProperties {
 
         public static class Authentication {
 
-            private final Oauth oauth = new Oauth();
+            private final Xauth xauth = new Xauth();
 
-            public Oauth getOauth() {
-                return oauth;
+            public Xauth getXauth() {
+                return xauth;
             }
 
-            public static class Oauth {
-
-                private String clientid;
+            public static class Xauth {
 
                 private String secret;
 
                 private int tokenValidityInSeconds = 1800;
-
-                public String getClientid() {
-                    return clientid;
-                }
-
-                public void setClientid(String clientid) {
-                    this.clientid = clientid;
-                }
 
                 public String getSecret() {
                     return secret;
@@ -272,7 +262,7 @@ public class JHipsterProperties {
 
         private String description = "iisidro API documentation";
 
-        private String version = "1.0.1";
+        private String version = "0.0.1";
 
         private String termsOfServiceUrl;
 

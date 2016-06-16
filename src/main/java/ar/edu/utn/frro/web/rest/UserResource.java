@@ -5,7 +5,6 @@ import ar.edu.utn.frro.domain.Authority;
 import ar.edu.utn.frro.domain.User;
 import ar.edu.utn.frro.repository.AuthorityRepository;
 import ar.edu.utn.frro.repository.UserRepository;
-import ar.edu.utn.frro.repository.search.UserSearchRepository;
 import ar.edu.utn.frro.security.AuthoritiesConstants;
 import ar.edu.utn.frro.service.MailService;
 import ar.edu.utn.frro.service.UserService;
@@ -31,9 +30,6 @@ import java.net.URISyntaxException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing users.
@@ -78,9 +74,6 @@ public class UserResource {
     @Inject
     private UserService userService;
 
-    @Inject
-    private UserSearchRepository userSearchRepository;
-
     /**
      * POST  /users -> Creates a new user.
      * <p>
@@ -114,7 +107,7 @@ public class UserResource {
             request.getContextPath();              // "/myContextPath" or "" if deployed in root context
             mailService.sendCreationEmail(newUser, baseUrl);
             return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
-                .headers(HeaderUtil.createAlert( "A user is created with identifier " + newUser.getLogin(), newUser.getLogin()))
+                .headers(HeaderUtil.createAlert( "user-management.created", newUser.getLogin()))
                 .body(newUser);
         }
     }
@@ -153,7 +146,7 @@ public class UserResource {
                     authority -> authorities.add(authorityRepository.findOne(authority))
                 );
                 return ResponseEntity.ok()
-                    .headers(HeaderUtil.createAlert("A user is updated with identifier " + managedUserDTO.getLogin(), managedUserDTO.getLogin()))
+                    .headers(HeaderUtil.createAlert("user-management.updated", managedUserDTO.getLogin()))
                     .body(new ManagedUserDTO(userRepository
                         .findOne(managedUserDTO.getId())));
             })
@@ -204,20 +197,6 @@ public class UserResource {
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
         userService.deleteUserInformation(login);
-        return ResponseEntity.ok().headers(HeaderUtil.createAlert( "A user is deleted with identifier " + login, login)).build();
-    }
-
-    /**
-     * SEARCH  /_search/users/:query -> search for the User corresponding
-     * to the query.
-     */
-    @RequestMapping(value = "/_search/users/{query}",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public List<User> search(@PathVariable String query) {
-        return StreamSupport
-            .stream(userSearchRepository.search(queryStringQuery(query)).spliterator(), false)
-            .collect(Collectors.toList());
+        return ResponseEntity.ok().headers(HeaderUtil.createAlert( "user-management.deleted", login)).build();
     }
 }

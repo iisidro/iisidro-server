@@ -1,31 +1,115 @@
-<!doctype html>
-<html class="no-js">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>iisidro</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width">
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-        <!-- build:css assets/styles/vendor.css -->
-        <!-- bower:css -->
-        <!-- endbower -->
-        <!-- endbuild -->
-        <!-- build:css assets/styles/main.css -->
-        <link rel="stylesheet" href="assets/styles/main.css">
-        <!-- endbuild -->
-    </head>
-    <body ng-app="iisidroApp">
-        <!--[if lt IE 9]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-        <div ng-show="{{ENV === 'dev'}}" class="development" ng-cloak=""></div>
-        <div ui-view="navbar" ng-cloak=""></div>
-        <div class="container">
-            <div class="well" ui-view="content">
-            	Here goes the content
-            </div>
-        </div>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Isidro light static</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js" > </script>
+</head>
+<body>
 
+	<h2>Please Register</h2>
+
+	<form id="registerForm" action="/api/register" method="POST">
+		<input type="text" value="ewen" name="login"></input> <input
+			type="password" value="password" name="password" /> <input
+			type="text" value="Ewen" name="firstName" /> <input type="text"
+			value="Mackenzie" name="lastName" /> <input type="text"
+			value="fanky10@gmail.com" name="email" /> <input type="text"
+			value="true" name="activated" /> <input type="text" value="en"
+			name="langKey" />
+			<input type="submit"/>
+	</form>
+	
+	<h2>Or Login</h2>
+
+	<form id="loginForm" method="POST" action="/api/authenticate">
+		<input type="text" value="ewen" name="username"></input> 
+		<input type="password" value="password" name="password" /> 
+		<input type="submit"/>
+	</form>
+	
+	<h2>Response</h2>
+	<div class="js-login-response"></div>
+	
+	<h2>Authenticate?</h2>
+	<button class="js-authenticate">Me!</button>
+	
+	<h2>User Data</h2>
+	<div class="js-auth-response"></div>
+	
+	<script>
+	$.fn.serializeObject = function() {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+            if (o[this.name]) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+
+	$(document).ready(function(){
+		
+		var windowToken;
+	    
+	    $('#registerForm').on('submit', function (evt) {
+	    	if(evt) evt.preventDefault();
+	    	var sObject =  $( this ).serializeObject(); 
+	    	var data = JSON.stringify(sObject);
+	    	var action = $(this).attr('action');
+	    	var method = $(this).attr('method');
+			console.log('submitting',action);
+			$.ajax({
+			    type: method,
+			    contentType: "application/json",
+			    url: action,
+			    data: data,
+			    dataType: 'json'
+			});
+		});
+	    $('#loginForm').on('submit', function (evt) {
+	    	if(evt) evt.preventDefault();
+	    	var sObject =  $( this ).serializeObject(); 
+	    	var data = JSON.stringify(sObject);
+	    	var action = $(this).attr('action');
+	    	var method = $(this).attr('method');
+			
+			$.ajax({
+			    type: method,
+			    contentType: "application/json",
+			    url: action,
+			    data: data,
+			    dataType: 'json',
+			    success: function (serverResponse) {
+			    	console.log('res: ',serverResponse);
+			    	$('.js-login-response').html(serverResponse.token);
+			    	windowToken = serverResponse.token;
+			    }
+			});
+		});
+	    
+	    $('.js-authenticate').on('click', function (evt){
+	    	console.log('btn clicked');
+	    	$.ajax({
+			    type: 'GET',
+			    contentType: "application/json",
+			    url: '/api/account',
+			    success: function (serverResponse) {
+			    	console.log('res: ',serverResponse);
+			    	$('.js-auth-response').html(" Activated: "+ serverResponse.activated+ " Authorities: "+serverResponse.authorities);
+			    },
+			    beforeSend: function(xhr, settings) { 
+			    	xhr.setRequestHeader('x-auth-token',windowToken); 
+			    }
+			});
+	    });
+	});
+	</script>
 </body>
 </html>
