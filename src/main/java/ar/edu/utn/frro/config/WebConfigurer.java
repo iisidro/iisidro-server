@@ -49,7 +49,8 @@ public class WebConfigurer implements ServletContextInitializer, EmbeddedServlet
         }
         if (env.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION)) {
             initCachingHttpHeadersFilter(servletContext, disps);
-            initStaticResourcesProductionFilter(servletContext, disps);
+            // TODO: uncomment this when the UI project integration is done.
+            // initStaticResourcesProductionFilter(servletContext, disps);
         }
         if (env.acceptsProfiles(Constants.SPRING_PROFILE_DEVELOPMENT)) {
             initH2Console(servletContext);
