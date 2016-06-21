@@ -39,7 +39,7 @@ jhipster:
         maxPoolSize: 50
         queueCapacity: 10000
     cors:
-        allowed-origins: "localhost"
+        allowed-origins: "http://localhost:8080"
         allowed-methods: GET, PUT, POST, DELETE, OPTIONS
         allowed-headers: "*"
         # exposed-headers:
