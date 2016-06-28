@@ -1,4 +1,6 @@
-[![Stories in Ready](https://badge.waffle.io/iisidro/iisidro-server.png?label=ready&title=Ready)](https://waffle.io/iisidro/iisidro-server)
+[![Build Status](https://travis-ci.org//iisidro/iisidro-server.svg?branch=master)](https://travis-ci.org//iisidro/iisidro-server) [![Stories in Ready](https://badge.waffle.io/iisidro/iisidro-server.png?label=ready&title=Ready)](https://waffle.io/iisidro/iisidro-server)
+
+
 
 # IISIdro Server
 
