@@ -1,0 +1,24 @@
+{
+  "generator-jhipster": {
+    "baseName": "iisidro",
+    "packageName": "ar.edu.utn.frro",
+    "packageFolder": "ar/edu/utn/frro",
+    "authenticationType": "xauth",
+    "hibernateCache": "no",
+    "clusteredHttpSession": "no",
+    "websocket": "no",
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": "no",
+    "buildTool": "maven",
+    "frontendBuilder": "none",
+    "enableTranslation": true,
+    "enableSocialSignIn": false,
+    "rememberMeKey": "7d5c55dd0b917f9ad8b288cea91c53331f51f89b",
+    "testFrameworks": [
+      "cucumber"
+    ],
+    "skipClient": true
+  }
+}

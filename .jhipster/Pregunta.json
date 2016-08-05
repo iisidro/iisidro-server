@@ -1,0 +1,28 @@
+{
+    "relationships": [
+        {
+            "relationshipName": "tipo",
+            "otherEntityName": "tipoPregunta",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "nombre",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "informacion",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20160802013936",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "pregunta",
+    "pagination": "no"
+}

@@ -1,0 +1,17 @@
+{
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "nombre",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20160802012915",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "tipo_pregunta",
+    "pagination": "no"
+}
