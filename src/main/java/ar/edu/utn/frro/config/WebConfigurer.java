@@ -3,6 +3,8 @@ package ar.edu.utn.frro.config;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlet.InstrumentedFilter;
 import com.codahale.metrics.servlets.MetricsServlet;
+import com.google.common.collect.Lists;
+
 import ar.edu.utn.frro.web.filter.CachingHttpHeadersFilter;
 import ar.edu.utn.frro.web.filter.StaticResourcesProductionFilter;
 import org.slf4j.Logger;
@@ -133,8 +135,11 @@ public class WebConfigurer implements ServletContextInitializer, EmbeddedServlet
 
     @Bean
     public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    	log.info("No cors: ");
+    	UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = props.getCors();
+        // override allowedOrigins haha
+        config.setAllowedOrigins(Arrays.asList(new String[]{"*"}));
         log.info("Configured origins: "+config.getAllowedOrigins());
         if (config.getAllowedOrigins() != null && !config.getAllowedOrigins().isEmpty()) {
             source.registerCorsConfiguration("/api/**", config);
