@@ -1,6 +1,6 @@
 package ar.edu.utn.frro.web.rest;
 
-import ar.edu.utn.frro.IisidroApp;
+import ar.edu.utn.frro.Application;
 import ar.edu.utn.frro.domain.Encuesta;
 import ar.edu.utn.frro.repository.EncuestaRepository;
 
@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see EncuestaResource
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = IisidroApp.class)
+@SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
 @IntegrationTest
 public class EncuestaResourceIntTest {
