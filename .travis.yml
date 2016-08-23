@@ -1,6 +1,9 @@
 language: java
 jdk:
 - oraclejdk8
+before_deploy:
+  npm install
+  ./deploy/compile_web_module.sh
 deploy:
   provider: heroku
   app: iisidro-server
