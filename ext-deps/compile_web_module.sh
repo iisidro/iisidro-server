@@ -4,7 +4,7 @@ git submodule update --init --recursive
 
 echo "Initializing"
 cd web-module
-sudo npm cache clean -f
+sudo $(which npm) cache clean -f
 npm install -g n
 
 echo "Compiling"
