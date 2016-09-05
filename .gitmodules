@@ -1,4 +1,0 @@
-[submodule "web-module"]
-	path = web-module
-	url = https://github.com/iisidro/iisidro-web.git
-	branch = master
