@@ -5,7 +5,8 @@ git submodule update --init --recursive
 echo "Initializing"
 cd web-module
 sudo $(which npm) cache clean -f
-npm install -g n
+sudo $(which npm) install
+sudo $(which npm) gulp
 
 echo "Compiling"
 gulp
