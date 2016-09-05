@@ -1,6 +1,6 @@
 #!/bin/sh
 echo "Updating web module"
-git submodule update --init
+git submodule update --init --recursive
 
 echo "Initializing"
 cd web-module
