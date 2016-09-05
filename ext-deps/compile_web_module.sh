@@ -4,10 +4,11 @@ git submodule update --init --recursive
 
 echo "Initializing"
 cd web-module
-npm install
+sudo npm cache clean -f
+npm install -g n
 
 echo "Compiling"
-gulp prod
+gulp
 
 echo "Distributing"
 rm -r ../src/main/webapp/dist
