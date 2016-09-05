@@ -1,7 +1,8 @@
 language: java
 jdk:
 - oraclejdk8
-before_deploy:
+sudo: required
+before_install:
 - chmod +x ext-deps/compile_web_module.sh
 - ./ext-deps/compile_web_module.sh
 deploy:
