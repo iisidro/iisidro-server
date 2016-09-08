@@ -1,7 +1,9 @@
 package ar.edu.utn.frro.web.rest;
 
-import ar.edu.utn.frro.IisidroApp;
+import ar.edu.utn.frro.Application;
+import ar.edu.utn.frro.domain.Encuesta;
 import ar.edu.utn.frro.domain.Seccion;
+import ar.edu.utn.frro.repository.EncuestaRepository;
 import ar.edu.utn.frro.repository.SeccionRepository;
 
 import org.junit.Before;
@@ -36,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see SeccionResource
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = IisidroApp.class)
+@SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
 @IntegrationTest
 public class SeccionResourceIntTest {
@@ -51,6 +53,9 @@ public class SeccionResourceIntTest {
 
     @Inject
     private SeccionRepository seccionRepository;
+
+    @Inject
+    private EncuestaRepository encuestaRepository;
 
     @Inject
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -74,10 +79,15 @@ public class SeccionResourceIntTest {
 
     @Before
     public void initTest() {
+        Encuesta encuesta = new Encuesta();
+        encuesta.setNombre("encuesta");
+        encuestaRepository.saveAndFlush(encuesta);
+
         seccion = new Seccion();
         seccion.setOrden(DEFAULT_ORDEN);
         seccion.setCodigo(DEFAULT_CODIGO);
         seccion.setNombre(DEFAULT_NOMBRE);
+        seccion.setSeccion_encuesta(encuesta);
     }
 
     @Test
@@ -185,8 +195,7 @@ public class SeccionResourceIntTest {
         int databaseSizeBeforeUpdate = seccionRepository.findAll().size();
 
         // Update the seccion
-        Seccion updatedSeccion = new Seccion();
-        updatedSeccion.setId(seccion.getId());
+        Seccion updatedSeccion = seccion;
         updatedSeccion.setOrden(UPDATED_ORDEN);
         updatedSeccion.setCodigo(UPDATED_CODIGO);
         updatedSeccion.setNombre(UPDATED_NOMBRE);
