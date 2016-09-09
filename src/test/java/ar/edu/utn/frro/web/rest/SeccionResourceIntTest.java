@@ -67,6 +67,8 @@ public class SeccionResourceIntTest {
 
     private Seccion seccion;
 
+    private Encuesta encuestaPadre;
+
     @PostConstruct
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -79,15 +81,15 @@ public class SeccionResourceIntTest {
 
     @Before
     public void initTest() {
-        Encuesta encuesta = new Encuesta();
-        encuesta.setNombre("encuesta");
-        encuestaRepository.saveAndFlush(encuesta);
+        encuestaPadre = new Encuesta();
+        encuestaPadre.setNombre("encuesta");
+        encuestaRepository.saveAndFlush(encuestaPadre);
 
         seccion = new Seccion();
         seccion.setOrden(DEFAULT_ORDEN);
         seccion.setCodigo(DEFAULT_CODIGO);
         seccion.setNombre(DEFAULT_NOMBRE);
-        seccion.setSeccion_encuesta(encuesta);
+        seccion.setSeccion_encuesta(encuestaPadre);
     }
 
     @Test
@@ -161,6 +163,22 @@ public class SeccionResourceIntTest {
                 .andExpect(jsonPath("$.[*].orden").value(hasItem(DEFAULT_ORDEN)))
                 .andExpect(jsonPath("$.[*].codigo").value(hasItem(DEFAULT_CODIGO.toString())))
                 .andExpect(jsonPath("$.[*].nombre").value(hasItem(DEFAULT_NOMBRE.toString())));
+    }
+
+    @Test
+    @Transactional
+    public void getAllSeccionsByEncuesta() throws Exception {
+        // Initialize the database
+        seccionRepository.saveAndFlush(seccion);
+
+        // Get all the seccions by encuesta
+        restSeccionMockMvc.perform(get("/api/seccionsByEncuesta/"+encuestaPadre.getId()+"?sort=id,desc"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(seccion.getId().intValue())))
+            .andExpect(jsonPath("$.[*].orden").value(hasItem(DEFAULT_ORDEN)))
+            .andExpect(jsonPath("$.[*].codigo").value(hasItem(DEFAULT_CODIGO.toString())))
+            .andExpect(jsonPath("$.[*].nombre").value(hasItem(DEFAULT_NOMBRE.toString())));
     }
 
     @Test

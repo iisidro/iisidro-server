@@ -27,10 +27,10 @@ import java.util.Optional;
 public class SeccionResource {
 
     private final Logger log = LoggerFactory.getLogger(SeccionResource.class);
-        
+
     @Inject
     private SeccionRepository seccionRepository;
-    
+
     /**
      * POST  /seccions : Create a new seccion.
      *
@@ -89,6 +89,21 @@ public class SeccionResource {
     public List<Seccion> getAllSeccions() {
         log.debug("REST request to get all Seccions");
         List<Seccion> seccions = seccionRepository.findAll();
+        return seccions;
+    }
+
+    /**
+     * GET  /seccions : get all the seccions.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of seccions in body
+     */
+    @RequestMapping(value = "/seccionsByEncuesta/{encuestaId}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public List<Seccion> getAllSeccionsByEncuesta(@PathVariable Long encuestaId) {
+        log.debug("REST request to get all Seccions by encuesta id {}", encuestaId);
+        List<Seccion> seccions = seccionRepository.findAllByEncuesta(encuestaId);
         return seccions;
     }
 
