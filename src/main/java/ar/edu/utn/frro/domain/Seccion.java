@@ -34,7 +34,8 @@ public class Seccion implements Serializable {
 
     @ManyToOne
     @NotNull
-    private Encuesta seccion_encuesta;
+    @JoinColumn(name="seccion_encuesta_id")
+    private Encuesta encuesta;
 
     public Long getId() {
         return id;
@@ -68,12 +69,12 @@ public class Seccion implements Serializable {
         this.nombre = nombre;
     }
 
-    public Encuesta getSeccion_encuesta() {
-        return seccion_encuesta;
+    public Encuesta getEncuesta() {
+        return encuesta;
     }
 
-    public void setSeccion_encuesta(Encuesta encuesta) {
-        this.seccion_encuesta = encuesta;
+    public void setEncuesta(Encuesta encuesta) {
+        this.encuesta = encuesta;
     }
 
     @Override
