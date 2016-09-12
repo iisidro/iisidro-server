@@ -99,15 +99,15 @@ public class SeccionResourceIntTest {
 
         // Create the Seccion
 
-        restSeccionMockMvc.perform(post("/api/seccions")
+        restSeccionMockMvc.perform(post("/api/secciones")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(seccion)))
                 .andExpect(status().isCreated());
 
         // Validate the Seccion in the database
-        List<Seccion> seccions = seccionRepository.findAll();
-        assertThat(seccions).hasSize(databaseSizeBeforeCreate + 1);
-        Seccion testSeccion = seccions.get(seccions.size() - 1);
+        List<Seccion> secciones = seccionRepository.findAll();
+        assertThat(secciones).hasSize(databaseSizeBeforeCreate + 1);
+        Seccion testSeccion = secciones.get(secciones.size() - 1);
         assertThat(testSeccion.getOrden()).isEqualTo(DEFAULT_ORDEN);
         assertThat(testSeccion.getCodigo()).isEqualTo(DEFAULT_CODIGO);
         assertThat(testSeccion.getNombre()).isEqualTo(DEFAULT_NOMBRE);
@@ -122,13 +122,13 @@ public class SeccionResourceIntTest {
 
         // Create the Seccion, which fails.
 
-        restSeccionMockMvc.perform(post("/api/seccions")
+        restSeccionMockMvc.perform(post("/api/secciones")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(seccion)))
                 .andExpect(status().isBadRequest());
 
-        List<Seccion> seccions = seccionRepository.findAll();
-        assertThat(seccions).hasSize(databaseSizeBeforeTest);
+        List<Seccion> secciones = seccionRepository.findAll();
+        assertThat(secciones).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
@@ -140,23 +140,23 @@ public class SeccionResourceIntTest {
 
         // Create the Seccion, which fails.
 
-        restSeccionMockMvc.perform(post("/api/seccions")
+        restSeccionMockMvc.perform(post("/api/secciones")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(seccion)))
                 .andExpect(status().isBadRequest());
 
-        List<Seccion> seccions = seccionRepository.findAll();
-        assertThat(seccions).hasSize(databaseSizeBeforeTest);
+        List<Seccion> secciones = seccionRepository.findAll();
+        assertThat(secciones).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
     @Transactional
-    public void getAllSeccions() throws Exception {
+    public void getAllsecciones() throws Exception {
         // Initialize the database
         seccionRepository.saveAndFlush(seccion);
 
-        // Get all the seccions
-        restSeccionMockMvc.perform(get("/api/seccions?sort=id,desc"))
+        // Get all the secciones
+        restSeccionMockMvc.perform(get("/api/secciones?sort=id,desc"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(seccion.getId().intValue())))
@@ -167,12 +167,12 @@ public class SeccionResourceIntTest {
 
     @Test
     @Transactional
-    public void getAllSeccionsByEncuesta() throws Exception {
+    public void getAllseccionesByEncuesta() throws Exception {
         // Initialize the database
         seccionRepository.saveAndFlush(seccion);
 
-        // Get all the seccions by encuesta
-        restSeccionMockMvc.perform(get("/api/seccionsByEncuesta/"+encuestaPadre.getId()+"?sort=id,desc"))
+        // Get all the secciones by encuesta
+        restSeccionMockMvc.perform(get("/api/seccionesByEncuesta/"+encuestaPadre.getId()+"?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(seccion.getId().intValue())))
@@ -188,7 +188,7 @@ public class SeccionResourceIntTest {
         seccionRepository.saveAndFlush(seccion);
 
         // Get the seccion
-        restSeccionMockMvc.perform(get("/api/seccions/{id}", seccion.getId()))
+        restSeccionMockMvc.perform(get("/api/secciones/{id}", seccion.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(seccion.getId().intValue()))
@@ -201,7 +201,7 @@ public class SeccionResourceIntTest {
     @Transactional
     public void getNonExistingSeccion() throws Exception {
         // Get the seccion
-        restSeccionMockMvc.perform(get("/api/seccions/{id}", Long.MAX_VALUE))
+        restSeccionMockMvc.perform(get("/api/secciones/{id}", Long.MAX_VALUE))
                 .andExpect(status().isNotFound());
     }
 
@@ -218,15 +218,15 @@ public class SeccionResourceIntTest {
         updatedSeccion.setCodigo(UPDATED_CODIGO);
         updatedSeccion.setNombre(UPDATED_NOMBRE);
 
-        restSeccionMockMvc.perform(put("/api/seccions")
+        restSeccionMockMvc.perform(put("/api/secciones")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(updatedSeccion)))
                 .andExpect(status().isOk());
 
         // Validate the Seccion in the database
-        List<Seccion> seccions = seccionRepository.findAll();
-        assertThat(seccions).hasSize(databaseSizeBeforeUpdate);
-        Seccion testSeccion = seccions.get(seccions.size() - 1);
+        List<Seccion> secciones = seccionRepository.findAll();
+        assertThat(secciones).hasSize(databaseSizeBeforeUpdate);
+        Seccion testSeccion = secciones.get(secciones.size() - 1);
         assertThat(testSeccion.getOrden()).isEqualTo(UPDATED_ORDEN);
         assertThat(testSeccion.getCodigo()).isEqualTo(UPDATED_CODIGO);
         assertThat(testSeccion.getNombre()).isEqualTo(UPDATED_NOMBRE);
@@ -240,12 +240,12 @@ public class SeccionResourceIntTest {
         int databaseSizeBeforeDelete = seccionRepository.findAll().size();
 
         // Get the seccion
-        restSeccionMockMvc.perform(delete("/api/seccions/{id}", seccion.getId())
+        restSeccionMockMvc.perform(delete("/api/secciones/{id}", seccion.getId())
                 .accept(TestUtil.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk());
 
         // Validate the database is empty
-        List<Seccion> seccions = seccionRepository.findAll();
-        assertThat(seccions).hasSize(databaseSizeBeforeDelete - 1);
+        List<Seccion> secciones = seccionRepository.findAll();
+        assertThat(secciones).hasSize(databaseSizeBeforeDelete - 1);
     }
 }
