@@ -86,7 +86,7 @@ public class SeccionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public List<Seccion> getAllsecciones() {
+    public List<Seccion> getAllSecciones() {
         log.debug("REST request to get all secciones");
         List<Seccion> secciones = seccionRepository.findAll();
         return secciones;
@@ -101,7 +101,7 @@ public class SeccionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public List<Seccion> getAllseccionesByEncuesta(@PathVariable Long encuestaId) {
+    public List<Seccion> getAllSeccionesByEncuesta(@PathVariable Long encuestaId) {
         log.debug("REST request to get all secciones by encuesta id {}", encuestaId);
         List<Seccion> secciones = seccionRepository.findAllByEncuesta(encuestaId);
         return secciones;

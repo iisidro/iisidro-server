@@ -151,7 +151,7 @@ public class SeccionResourceIntTest {
 
     @Test
     @Transactional
-    public void getAllsecciones() throws Exception {
+    public void getAllSecciones() throws Exception {
         // Initialize the database
         seccionRepository.saveAndFlush(seccion);
 
@@ -167,7 +167,7 @@ public class SeccionResourceIntTest {
 
     @Test
     @Transactional
-    public void getAllseccionesByEncuesta() throws Exception {
+    public void getAllSeccionesByEncuesta() throws Exception {
         // Initialize the database
         seccionRepository.saveAndFlush(seccion);
 
