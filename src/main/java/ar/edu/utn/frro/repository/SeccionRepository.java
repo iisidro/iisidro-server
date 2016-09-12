@@ -13,7 +13,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface SeccionRepository extends JpaRepository<Seccion,Long> {
 
-    @Query("SELECT s FROM Seccion s WHERE s.seccion_encuesta.id = :encuestaId")
+    @Query("SELECT s FROM Seccion s WHERE s.encuesta.id = :encuestaId")
     public List<Seccion> findAllByEncuesta(@Param("encuestaId") Long encuestaId);
 
 }
