@@ -32,13 +32,13 @@ public class SeccionResource {
     private SeccionRepository seccionRepository;
 
     /**
-     * POST  /seccions : Create a new seccion.
+     * POST  /secciones : Create a new seccion.
      *
      * @param seccion the seccion to create
      * @return the ResponseEntity with status 201 (Created) and with body the new seccion, or with status 400 (Bad Request) if the seccion has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @RequestMapping(value = "/seccions",
+    @RequestMapping(value = "/secciones",
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
@@ -48,13 +48,13 @@ public class SeccionResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("seccion", "idexists", "A new seccion cannot already have an ID")).body(null);
         }
         Seccion result = seccionRepository.save(seccion);
-        return ResponseEntity.created(new URI("/api/seccions/" + result.getId()))
+        return ResponseEntity.created(new URI("/api/secciones/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("seccion", result.getId().toString()))
             .body(result);
     }
 
     /**
-     * PUT  /seccions : Updates an existing seccion.
+     * PUT  /secciones : Updates an existing seccion.
      *
      * @param seccion the seccion to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated seccion,
@@ -62,7 +62,7 @@ public class SeccionResource {
      * or with status 500 (Internal Server Error) if the seccion couldnt be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @RequestMapping(value = "/seccions",
+    @RequestMapping(value = "/secciones",
         method = RequestMethod.PUT,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
@@ -78,42 +78,42 @@ public class SeccionResource {
     }
 
     /**
-     * GET  /seccions : get all the seccions.
+     * GET  /secciones : get all the secciones.
      *
-     * @return the ResponseEntity with status 200 (OK) and the list of seccions in body
+     * @return the ResponseEntity with status 200 (OK) and the list of secciones in body
      */
-    @RequestMapping(value = "/seccions",
+    @RequestMapping(value = "/secciones",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public List<Seccion> getAllSeccions() {
-        log.debug("REST request to get all Seccions");
-        List<Seccion> seccions = seccionRepository.findAll();
-        return seccions;
+    public List<Seccion> getAllSecciones() {
+        log.debug("REST request to get all secciones");
+        List<Seccion> secciones = seccionRepository.findAll();
+        return secciones;
     }
 
     /**
-     * GET  /seccions : get all the seccions.
+     * GET  /secciones : get all the secciones.
      *
-     * @return the ResponseEntity with status 200 (OK) and the list of seccions in body
+     * @return the ResponseEntity with status 200 (OK) and the list of secciones in body
      */
-    @RequestMapping(value = "/seccionsByEncuesta/{encuestaId}",
+    @RequestMapping(value = "/seccionesByEncuesta/{encuestaId}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public List<Seccion> getAllSeccionsByEncuesta(@PathVariable Long encuestaId) {
-        log.debug("REST request to get all Seccions by encuesta id {}", encuestaId);
-        List<Seccion> seccions = seccionRepository.findAllByEncuesta(encuestaId);
-        return seccions;
+    public List<Seccion> getAllSeccionesByEncuesta(@PathVariable Long encuestaId) {
+        log.debug("REST request to get all secciones by encuesta id {}", encuestaId);
+        List<Seccion> secciones = seccionRepository.findAllByEncuesta(encuestaId);
+        return secciones;
     }
 
     /**
-     * GET  /seccions/:id : get the "id" seccion.
+     * GET  /secciones/:id : get the "id" seccion.
      *
      * @param id the id of the seccion to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the seccion, or with status 404 (Not Found)
      */
-    @RequestMapping(value = "/seccions/{id}",
+    @RequestMapping(value = "/secciones/{id}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
@@ -128,12 +128,12 @@ public class SeccionResource {
     }
 
     /**
-     * DELETE  /seccions/:id : delete the "id" seccion.
+     * DELETE  /secciones/:id : delete the "id" seccion.
      *
      * @param id the id of the seccion to delete
      * @return the ResponseEntity with status 200 (OK)
      */
-    @RequestMapping(value = "/seccions/{id}",
+    @RequestMapping(value = "/secciones/{id}",
         method = RequestMethod.DELETE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
