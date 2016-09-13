@@ -18,6 +18,11 @@
         {
             "fieldName": "informacion",
             "fieldType": "String"
+        },
+        {
+            "fieldName": "fecha_hora_creacion",
+            "fieldType": "Datetime",
+            "fieldValidateRules": []
         }
     ],
     "changelogDate": "20160802013936",
