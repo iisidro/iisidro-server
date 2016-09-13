@@ -551,7 +551,7 @@
                     <driver>org.h2.Driver</driver>
                     <url>jdbc:h2:file:./target/h2db/db/iisidro</url>
                     <defaultSchemaName></defaultSchemaName>
-                    <username></username>
+                    <username>iisidro</username>
                     <password></password>
                     <referenceUrl>hibernate:spring:ar.edu.utn.frro.domain?dialect=org.hibernate.dialect.H2Dialect</referenceUrl>
                     <verbose>true</verbose>
