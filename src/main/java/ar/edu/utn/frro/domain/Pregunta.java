@@ -4,6 +4,7 @@ package ar.edu.utn.frro.domain;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -28,6 +29,14 @@ public class Pregunta implements Serializable {
 
     @ManyToOne
     private TipoPregunta tipo;
+
+    @Column(name = "fecha_hora_creacion")
+    private Date fechaHoraCreacion;
+
+    public Pregunta() {
+        // this can be modified by a DatetimeUtils and change by timezone and such
+        this.fechaHoraCreacion = new Date();
+    }
 
     public Long getId() {
         return id;
@@ -59,6 +68,14 @@ public class Pregunta implements Serializable {
 
     public void setTipo(TipoPregunta tipoPregunta) {
         this.tipo = tipoPregunta;
+    }
+
+    public Date getFechaHoraCreacion() {
+        return fechaHoraCreacion;
+    }
+
+    public void setFechaHoraCreacion(Date fechaHoraCreacion) {
+        this.fechaHoraCreacion = fechaHoraCreacion;
     }
 
     @Override
