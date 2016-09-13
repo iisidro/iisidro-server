@@ -7,6 +7,11 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "fecha_hora_creacion",
+            "fieldType": "Datetime",
+            "fieldValidateRules": []
         }
     ],
     "changelogDate": "20160823132706",
