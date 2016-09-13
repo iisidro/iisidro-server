@@ -4,6 +4,7 @@ package ar.edu.utn.frro.domain;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -23,6 +24,14 @@ public class Encuesta implements Serializable {
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
+    @Column(name = "fecha_hora_creacion")
+    private Date fechaHoraCreacion;
+
+    public Encuesta() {
+        // this can be modified to use different server date timezone as needed
+        this.fechaHoraCreacion = new Date();
+    }
+
     public Long getId() {
         return id;
     }
@@ -37,6 +46,14 @@ public class Encuesta implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Date getFechaHoraCreacion() {
+        return fechaHoraCreacion;
+    }
+
+    public void setFechaHoraCreacion(Date fechaHoraCreacion) {
+        this.fechaHoraCreacion = fechaHoraCreacion;
     }
 
     @Override
