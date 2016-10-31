@@ -5,6 +5,12 @@
             "otherEntityName": "tipoPregunta",
             "relationshipType": "many-to-one",
             "otherEntityField": "id"
+        },
+        {
+            "relationshipName": "encuestas_seccion",
+            "otherEntityName": "seccion",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
         }
     ],
     "fields": [
@@ -25,7 +31,7 @@
             "fieldValidateRules": []
         }
     ],
-    "changelogDate": "20160802013936",
+    "changelogDate": "20161030220902",
     "dto": "no",
     "service": "no",
     "entityTableName": "pregunta",
