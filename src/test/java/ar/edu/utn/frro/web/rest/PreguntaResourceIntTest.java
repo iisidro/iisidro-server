@@ -1,13 +1,22 @@
 package ar.edu.utn.frro.web.rest;
 
 import ar.edu.utn.frro.Application;
+import ar.edu.utn.frro.domain.Encuesta;
 import ar.edu.utn.frro.domain.Pregunta;
+import ar.edu.utn.frro.domain.Seccion;
+import ar.edu.utn.frro.domain.TipoPregunta;
+import ar.edu.utn.frro.repository.EncuestaRepository;
 import ar.edu.utn.frro.repository.PreguntaRepository;
 
+import ar.edu.utn.frro.repository.SeccionRepository;
+import ar.edu.utn.frro.repository.TipoPreguntaRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
+
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -23,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,8 +56,22 @@ public class PreguntaResourceIntTest {
     private static final String DEFAULT_INFORMACION = "AAAAA";
     private static final String UPDATED_INFORMACION = "BBBBB";
 
+    private static final String TIPO_PREGUNTA_NOMBRE = "Mocked";
+
+    private static final String SECCION_PREGUNTA_NOMBRE = "Mocked";
+    private static final String SECCION_PREGUNTA_CODIGO = "Mocked";
+
     @Inject
     private PreguntaRepository preguntaRepository;
+
+    @Inject
+    private TipoPreguntaRepository tipoPreguntaRepository;
+
+    @Inject
+    private SeccionRepository seccionRepository;
+
+    @Inject
+    private EncuestaRepository encuestaRepository;
 
     @Inject
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -59,14 +83,35 @@ public class PreguntaResourceIntTest {
 
     private Pregunta pregunta;
 
+    private TipoPregunta tipoPregunta;
+
+    private Seccion seccionPregunta;
+
     @PostConstruct
     public void setup() {
         MockitoAnnotations.initMocks(this);
         PreguntaResource preguntaResource = new PreguntaResource();
         ReflectionTestUtils.setField(preguntaResource, "preguntaRepository", preguntaRepository);
+        ReflectionTestUtils.setField(preguntaResource, "seccionRepository", seccionRepository);
         this.restPreguntaMockMvc = MockMvcBuilders.standaloneSetup(preguntaResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setMessageConverters(jacksonMessageConverter).build();
+
+        tipoPregunta = new TipoPregunta();
+        tipoPregunta.setNombre(TIPO_PREGUNTA_NOMBRE);
+        tipoPreguntaRepository.save(tipoPregunta);
+
+        Encuesta encuesta = new Encuesta();
+        encuesta.setNombre("Un Numbre");
+        encuesta = encuestaRepository.save(encuesta);
+
+        seccionPregunta = new Seccion();
+        seccionPregunta.setNombre(SECCION_PREGUNTA_NOMBRE);
+        seccionPregunta.setCodigo(SECCION_PREGUNTA_CODIGO);
+        seccionPregunta.setOrden(1);
+        seccionPregunta.setEncuesta(encuesta);
+        seccionPregunta = seccionRepository.save(seccionPregunta);
+        assertThat(seccionPregunta.getId()).isNotNull();
     }
 
     @Before
@@ -74,26 +119,50 @@ public class PreguntaResourceIntTest {
         pregunta = new Pregunta();
         pregunta.setNombre(DEFAULT_NOMBRE);
         pregunta.setInformacion(DEFAULT_INFORMACION);
+        pregunta.setTipo(tipoPregunta);
+        pregunta.setSeccion(seccionPregunta);
     }
 
     @Test
     @Transactional
     public void createPregunta() throws Exception {
+        Pregunta testPregunta = createPregunta(pregunta);
+        assertThat(testPregunta.getNombre()).isEqualTo(DEFAULT_NOMBRE);
+        assertThat(testPregunta.getInformacion()).isEqualTo(DEFAULT_INFORMACION);
+
+        assertThat(testPregunta.getTipo()).isNotNull();
+        assertThat(testPregunta.getTipo().getNombre()).isEqualTo(TIPO_PREGUNTA_NOMBRE);
+
+        assertThat(testPregunta.getSeccion()).isNotNull();
+        assertThat(testPregunta.getSeccion().getNombre()).isEqualTo(SECCION_PREGUNTA_NOMBRE);
+        assertThat(testPregunta.getSeccion().getCodigo()).isEqualTo(SECCION_PREGUNTA_CODIGO);
+    }
+
+    @Test
+    @Transactional
+    public void createPreguntaWithNoSeccion() throws Exception {
+        pregunta.setSeccion(null);
+        Pregunta testPregunta = createPregunta(pregunta);
+        assertThat(testPregunta.getNombre()).isEqualTo(DEFAULT_NOMBRE);
+        assertThat(testPregunta.getInformacion()).isEqualTo(DEFAULT_INFORMACION);
+
+        assertThat(testPregunta.getTipo()).isNotNull();
+        assertThat(testPregunta.getTipo().getNombre()).isEqualTo(TIPO_PREGUNTA_NOMBRE);
+
+        assertThat(testPregunta.getSeccion()).isNull();
+    }
+
+    private Pregunta createPregunta(Pregunta pregunta) throws Exception {
         int databaseSizeBeforeCreate = preguntaRepository.findAll().size();
-
-        // Create the Pregunta
-
         restPreguntaMockMvc.perform(post("/api/preguntas")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(pregunta)))
-                .andExpect(status().isCreated());
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(pregunta)))
+            .andExpect(status().isCreated());
 
         // Validate the Pregunta in the database
         List<Pregunta> preguntas = preguntaRepository.findAll();
         assertThat(preguntas).hasSize(databaseSizeBeforeCreate + 1);
-        Pregunta testPregunta = preguntas.get(preguntas.size() - 1);
-        assertThat(testPregunta.getNombre()).isEqualTo(DEFAULT_NOMBRE);
-        assertThat(testPregunta.getInformacion()).isEqualTo(DEFAULT_INFORMACION);
+        return preguntas.get(preguntas.size() - 1);
     }
 
     @Test
@@ -176,6 +245,7 @@ public class PreguntaResourceIntTest {
         Pregunta testPregunta = preguntas.get(preguntas.size() - 1);
         assertThat(testPregunta.getNombre()).isEqualTo(UPDATED_NOMBRE);
         assertThat(testPregunta.getInformacion()).isEqualTo(UPDATED_INFORMACION);
+        assertThat(testPregunta.getSeccion()).isNull();
     }
 
     @Test
@@ -193,5 +263,70 @@ public class PreguntaResourceIntTest {
         // Validate the database is empty
         List<Pregunta> preguntas = preguntaRepository.findAll();
         assertThat(preguntas).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPreguntasBySeccion() throws Exception {
+        // Pregunta without section
+        Pregunta preguntaWithoutSection = new Pregunta();
+        preguntaWithoutSection.setId(pregunta.getId());
+        preguntaWithoutSection.setNombre(UPDATED_NOMBRE);
+        preguntaWithoutSection.setInformacion(UPDATED_INFORMACION);
+
+        preguntaRepository.flush();
+        preguntaRepository.save(pregunta);
+        preguntaRepository.save(preguntaWithoutSection);
+
+        // Get all the preguntas
+        restPreguntaMockMvc.perform(get("/api/preguntas/seccion/{seccionId}?sort=id,desc", seccionPregunta.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(pregunta.getId().intValue())))
+            .andExpect(jsonPath("$.[*].nombre").value(hasItem(DEFAULT_NOMBRE.toString())))
+            .andExpect(jsonPath("$.[*].informacion").value(hasItem(DEFAULT_INFORMACION.toString())));
+    }
+
+    @Test
+    @Transactional
+    public void updatePreguntasSeccionWithInvalidSeccion() throws Exception {
+        List<Pregunta> preguntas = new ArrayList<>();
+        restPreguntaMockMvc.perform(post("/api/preguntas/seccion/{id}", Long.MAX_VALUE)
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(preguntas)))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    public void updatePreguntasSeccionWithInvalidContent() throws Exception {
+        List<Pregunta> preguntas = new ArrayList<>();
+        restPreguntaMockMvc.perform(post("/api/preguntas/seccion/{id}", seccionPregunta.getId())
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(preguntas)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    public void updatePreguntasSeccion() throws Exception {
+        // save with no seccion
+        pregunta.setSeccion(null);
+        preguntaRepository.saveAndFlush(pregunta);
+
+        List<Pregunta> preguntas = new ArrayList<>();
+        preguntas.add(pregunta);
+
+        restPreguntaMockMvc.perform(post("/api/preguntas/seccion/{id}", seccionPregunta.getId())
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(preguntas)))
+            .andExpect(status().isOk());
+
+        // Validate the Pregunta in the database
+        Pregunta testPregunta = preguntaRepository.findOne(pregunta.getId());
+        assertThat(testPregunta.getNombre()).isEqualTo(DEFAULT_NOMBRE);
+        assertThat(testPregunta.getInformacion()).isEqualTo(DEFAULT_INFORMACION);
+        assertThat(testPregunta.getSeccion()).isNotNull();
+        assertThat(testPregunta.getSeccion().getId()).isEqualTo(seccionPregunta.getId());
     }
 }
