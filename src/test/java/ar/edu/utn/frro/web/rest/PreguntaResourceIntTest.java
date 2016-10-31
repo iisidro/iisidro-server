@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,6 +92,7 @@ public class PreguntaResourceIntTest {
         MockitoAnnotations.initMocks(this);
         PreguntaResource preguntaResource = new PreguntaResource();
         ReflectionTestUtils.setField(preguntaResource, "preguntaRepository", preguntaRepository);
+        ReflectionTestUtils.setField(preguntaResource, "seccionRepository", seccionRepository);
         this.restPreguntaMockMvc = MockMvcBuilders.standaloneSetup(preguntaResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setMessageConverters(jacksonMessageConverter).build();
@@ -277,11 +279,54 @@ public class PreguntaResourceIntTest {
         preguntaRepository.save(preguntaWithoutSection);
 
         // Get all the preguntas
-        restPreguntaMockMvc.perform(get("/api/preguntas/seccion/" + seccionPregunta.getId() + "?sort=id,desc"))
+        restPreguntaMockMvc.perform(get("/api/preguntas/seccion/{seccionId}?sort=id,desc", seccionPregunta.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(pregunta.getId().intValue())))
             .andExpect(jsonPath("$.[*].nombre").value(hasItem(DEFAULT_NOMBRE.toString())))
             .andExpect(jsonPath("$.[*].informacion").value(hasItem(DEFAULT_INFORMACION.toString())));
+    }
+
+    @Test
+    @Transactional
+    public void updatePreguntasSeccionWithInvalidSeccion() throws Exception {
+        List<Pregunta> preguntas = new ArrayList<>();
+        restPreguntaMockMvc.perform(post("/api/preguntas/seccion/{id}", Long.MAX_VALUE)
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(preguntas)))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    public void updatePreguntasSeccionWithInvalidContent() throws Exception {
+        List<Pregunta> preguntas = new ArrayList<>();
+        restPreguntaMockMvc.perform(post("/api/preguntas/seccion/{id}", seccionPregunta.getId())
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(preguntas)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    public void updatePreguntasSeccion() throws Exception {
+        // save with no seccion
+        pregunta.setSeccion(null);
+        preguntaRepository.saveAndFlush(pregunta);
+
+        List<Pregunta> preguntas = new ArrayList<>();
+        preguntas.add(pregunta);
+
+        restPreguntaMockMvc.perform(post("/api/preguntas/seccion/{id}", seccionPregunta.getId())
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(preguntas)))
+            .andExpect(status().isOk());
+
+        // Validate the Pregunta in the database
+        Pregunta testPregunta = preguntaRepository.findOne(pregunta.getId());
+        assertThat(testPregunta.getNombre()).isEqualTo(DEFAULT_NOMBRE);
+        assertThat(testPregunta.getInformacion()).isEqualTo(DEFAULT_INFORMACION);
+        assertThat(testPregunta.getSeccion()).isNotNull();
+        assertThat(testPregunta.getSeccion().getId()).isEqualTo(seccionPregunta.getId());
     }
 }
