@@ -27,10 +27,10 @@ import java.util.Optional;
 public class PreguntaResource {
 
     private final Logger log = LoggerFactory.getLogger(PreguntaResource.class);
-        
+
     @Inject
     private PreguntaRepository preguntaRepository;
-    
+
     /**
      * POST  /preguntas : Create a new pregunta.
      *
@@ -126,6 +126,16 @@ public class PreguntaResource {
         log.debug("REST request to delete Pregunta : {}", id);
         preguntaRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("pregunta", id.toString())).build();
+    }
+
+    @RequestMapping(value = "/preguntas/seccion/{seccionId}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public List<Pregunta> findPreguntasBySeccion(@PathVariable Long seccionId) {
+        log.debug("REST request to find all Preguntas by seccion {}", seccionId);
+        List<Pregunta> preguntas = preguntaRepository.findAllBySeccion(seccionId);
+        return preguntas;
     }
 
 }

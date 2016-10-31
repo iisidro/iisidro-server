@@ -243,6 +243,7 @@ public class PreguntaResourceIntTest {
         Pregunta testPregunta = preguntas.get(preguntas.size() - 1);
         assertThat(testPregunta.getNombre()).isEqualTo(UPDATED_NOMBRE);
         assertThat(testPregunta.getInformacion()).isEqualTo(UPDATED_INFORMACION);
+        assertThat(testPregunta.getSeccion()).isNull();
     }
 
     @Test
@@ -260,5 +261,27 @@ public class PreguntaResourceIntTest {
         // Validate the database is empty
         List<Pregunta> preguntas = preguntaRepository.findAll();
         assertThat(preguntas).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPreguntasBySeccion() throws Exception {
+        // Pregunta without section
+        Pregunta preguntaWithoutSection = new Pregunta();
+        preguntaWithoutSection.setId(pregunta.getId());
+        preguntaWithoutSection.setNombre(UPDATED_NOMBRE);
+        preguntaWithoutSection.setInformacion(UPDATED_INFORMACION);
+
+        preguntaRepository.flush();
+        preguntaRepository.save(pregunta);
+        preguntaRepository.save(preguntaWithoutSection);
+
+        // Get all the preguntas
+        restPreguntaMockMvc.perform(get("/api/preguntas/seccion/" + seccionPregunta.getId() + "?sort=id,desc"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(pregunta.getId().intValue())))
+            .andExpect(jsonPath("$.[*].nombre").value(hasItem(DEFAULT_NOMBRE.toString())))
+            .andExpect(jsonPath("$.[*].informacion").value(hasItem(DEFAULT_INFORMACION.toString())));
     }
 }
