@@ -1,68 +1,51 @@
-[![Build Status](https://travis-ci.org//iisidro/iisidro-server.svg?branch=master)](https://travis-ci.org//iisidro/iisidro-server) [![Stories in Ready](https://badge.waffle.io/iisidro/iisidro-server.png?label=ready&title=Ready)](https://waffle.io/iisidro/iisidro-server)
-
-
+[![Build Status](https://travis-ci.org/iisidro/iisidro-server.svg?branch=master)](https://travis-ci.org/iisidro/iisidro-server)
 
 # IISIdro Server
 
 La aplicación fue construida utilizando **JHipster**, la documentación de esta herramienta se encuentra disponible en: [https://jhipster.github.io](https://jhipster.github.io).
 
-Antes de levantar el proyecto debe instalar y configurar las siguientes dependencias:
+# Una vez clonado el repositorio
 
-1. **Node.js**: para ejecutar el servidor web de desarrollo y constuir el proyecto .
+Testear que la aplicación tiene todos los tests locales corriendo correctamente:
 
-	Después de installar Node, deberá ejecutar los siguientes comandos para instalar las herramientas de desarrollo (como
-	Bower y BrowserSync). 
-	
-	Sólo tendrá que ejecutar este comando cuando se modifiquen las dependencias en `package.json`. 
-	
-	    npm install
-	
-	Utilizamos **Gulp** como nuestro sistema de construcción, para instalarlo:
-	
-	    npm install -g gulp
-	
-	Ejecute los siguientes comando en dos consolas separadas para que el navegador se actualice automáticamente cuando los archivos en su disco cambien.
-	
-	    mvn
-	    gulp
+```bash
+mvn test
+```
 
-2. **Bower**: para gestionar CSS y las dependencias de JavaScript del proyecto. Puede actualizar las dependencias especificando la versión más reciente en `bower.json`. También puede ejectuar `bower update` y `bower install` para administrar las dependencias. Para conocer como se utiliza un comando puede agregar el parámentro `-h`. Por ejemplo, `bower update -h`.
+Para trabajar con una base de datos relacional local, instalar: [PostgreSQL](https://www.postgresql.org)
 
-# Building para producción
+Crear la definicion de los roles y la base de datos con:
 
-Para optimizar el cliente de iisidro en producción, ejecute:
+```bash
+CREATE ROLE iisidro;   
 
-    mvn -Pprod clean package
+CREATE DATABASE iisidro_db WITH OWNER=iisidro;  
 
-Concatenará y minificará los archivos de CSS y JavaScript . También modificará el ` index.html`.
+ALTER ROLE "iisidro" WITH LOGIN;
 
-Para asegurarse que todo funciona bien, ejecute:
+```
 
-    java -jar target/*.war --spring.profiles.active=prod
+Luego verificar que la conexión esta disponible al PSQL:
 
-A continuación ingrese en el navegador a [http://localhost:8080](http://localhost:8080).
+```bash
+psql -h localhost -U iisidro iisidro_db
+```
 
-# Testing
+Finalmente testear la aplicación contra el PSQL:
 
-Los unit tests son ejecutadas mediante **JUnit** a través de:
+```bash
+./mvnw -Dprod
+```
 
-    mvn test
+# Configuracion IntelliJ IDEA (recomendada)
 
-# Integración Continua
-
-Para configurar este proyecto en **Jenkins** , utilize la siguiente configuración:
-
-* Project name: `iisidro`
-* Source Code Management
-    * Git Repository: `git@github.com:xxxx/iisidro.git`
-    * Branches to build: `*/master`
-    * Additional Behaviours: `Wipe out repository & force clone`
-* Build Triggers
-    * Poll SCM / Schedule: `H/5 * * * *`
-* Build
-    * Invoke Maven / Tasks: `-Pprod clean package`
-* Post-build Actions
-    * Publish JUnit test result report / Test Report XMLs: `build/test-results/*.xml`
+- Import project > Seleccionar el archivo pom.xml de nodo principal de la carpeta clonada.
+- Darle Next en la pantalla de configuración de proyecto.
+- Seleccionar profile: **dev**
+- Seleccionar el unico proyecto a importar: ar.edu.utn.frro:iisidro:0.0.1-SNAPSHOT
+- Configurar el JDK 1.8
+- Finalmente configurar el nombre que le dara IntelliJ IDEA al proyecto: iisidro-server: Finish.
+- Si aparece un cartel que dice que tiene el repositorio git configurado darle: "Add root".
 
 # Configuración en Eclipse IDE
 
