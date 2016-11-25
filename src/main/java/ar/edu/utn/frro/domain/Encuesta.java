@@ -27,6 +27,12 @@ public class Encuesta implements Serializable {
     @Column(name = "fecha_hora_creacion")
     private Date fechaHoraCreacion;
 
+    @Column(name = "fecha_hora_desde")
+    private Date fechaHoraDesde;
+
+    @Column(name = "fecha_hora_hasta")
+    private Date fechaHoraHasta;
+
     private enum surveyStatus {
         REVISION, ACTIVA, CERRADA
     }
@@ -63,11 +69,19 @@ public class Encuesta implements Serializable {
         this.fechaHoraCreacion = fechaHoraCreacion;
     }
 
-
     public surveyStatus getEstado() { return estado; }
 
     public void setEstado(surveyStatus estado) { this.estado = estado; }
 
+    public Date getFechaHoraDesde() { return fechaHoraDesde; }
+
+    public void setFechaHoraDesde(Date fechaHoraDesde) { this.fechaHoraDesde = fechaHoraDesde; }
+
+    public Date getFechaHoraHasta() { return fechaHoraHasta; }
+
+    public void setFechaHoraHasta(Date fechaHoraHasta) {
+        this.fechaHoraHasta = fechaHoraHasta;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) {
