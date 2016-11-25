@@ -27,6 +27,13 @@ public class Encuesta implements Serializable {
     @Column(name = "fecha_hora_creacion")
     private Date fechaHoraCreacion;
 
+    private enum surveyStatus {
+        REVISION, ACTIVA, CERRADA
+    }
+
+    @Column(name = "estado_encuesta")
+    surveyStatus estado;
+
     public Encuesta() {
         // this can be modified to use different server date timezone as needed
         this.fechaHoraCreacion = new Date();
@@ -55,6 +62,11 @@ public class Encuesta implements Serializable {
     public void setFechaHoraCreacion(Date fechaHoraCreacion) {
         this.fechaHoraCreacion = fechaHoraCreacion;
     }
+
+
+    public surveyStatus getEstado() { return estado; }
+
+    public void setEstado(surveyStatus estado) { this.estado = estado; }
 
     @Override
     public boolean equals(Object o) {
