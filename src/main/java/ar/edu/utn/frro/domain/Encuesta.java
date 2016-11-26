@@ -43,6 +43,7 @@ public class Encuesta implements Serializable {
     public Encuesta() {
         // this can be modified to use different server date timezone as needed
         this.fechaHoraCreacion = new Date();
+        this.estado = surveyStatus.REVISION;
     }
 
     public Long getId() {
