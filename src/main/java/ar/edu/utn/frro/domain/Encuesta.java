@@ -38,10 +38,10 @@ public class Encuesta implements Serializable {
     }
 
     @Column(name = "estado_encuesta")
-    surveyStatus estado;
-    
+    private surveyStatus estado;
+
     @Column(name = "link")
-    String link;
+    private String link;
 
     public Encuesta() {
         // this can be modified to use different server date timezone as needed
