@@ -28,7 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -254,7 +256,7 @@ public class PreguntaResourceIntTest {
 
     @Test
     @Transactional
-    public void getAllPreguntasBySeccion() throws Exception {
+    public void getPreguntasWithoutSections() throws Exception {
         // Pregunta without section
         Pregunta preguntaWithoutSection = new Pregunta();
         preguntaWithoutSection.setId(pregunta.getId());
@@ -269,9 +271,39 @@ public class PreguntaResourceIntTest {
         restPreguntaMockMvc.perform(get("/api/preguntas/seccion/{seccionId}?sort=id,desc", seccionPregunta.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(pregunta.getId().intValue())))
-            .andExpect(jsonPath("$.[*].nombre").value(hasItem(DEFAULT_NOMBRE.toString())))
-            .andExpect(jsonPath("$.[*].informacion").value(hasItem(DEFAULT_INFORMACION.toString())));
+            .andExpect(jsonPath("$.[*]").isEmpty());
+    }
+
+    @Test
+    @Transactional
+    public void getPreguntasWithSections() throws Exception {
+        // Pregunta without section
+        Pregunta pregunta = new Pregunta();
+        pregunta.setId(this.pregunta.getId());
+        pregunta.setNombre(UPDATED_NOMBRE);
+        pregunta.setInformacion(UPDATED_INFORMACION);
+
+        Pregunta secondPregunta = new Pregunta();
+        secondPregunta.setNombre("Seccionada");
+        secondPregunta.setInformacion("mucha seccion wow");
+
+        preguntaRepository.flush();
+        preguntaRepository.save(pregunta);
+        preguntaRepository.save(secondPregunta);
+
+        Set<Pregunta> preguntas = new HashSet<>();
+        preguntas.add(pregunta);
+        preguntas.add(secondPregunta);
+
+        seccionPregunta.setPreguntas(preguntas);
+        seccionRepository.flush();
+        seccionRepository.save(seccionPregunta);
+
+        // Get all the preguntas
+        restPreguntaMockMvc.perform(get("/api/preguntas/seccion/{seccionId}?sort=id,desc", seccionPregunta.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*]").isNotEmpty());
     }
 
     @Test
