@@ -2,10 +2,12 @@ package ar.edu.utn.frro.domain;
 
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A Pregunta.
@@ -30,12 +32,11 @@ public class Pregunta implements Serializable {
     @ManyToOne
     private TipoPregunta tipo;
 
-    @ManyToOne
-    @JoinColumn(name="pregunta_seccion_id")
-    private Seccion seccion;
-
     @Column(name = "fecha_hora_creacion")
     private Date fechaHoraCreacion;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "preguntas")
+    private Set<Seccion> secciones = new HashSet<>();
 
     public Pregunta() {
         // this can be modified by a DatetimeUtils and change by timezone and such
@@ -82,12 +83,12 @@ public class Pregunta implements Serializable {
         this.fechaHoraCreacion = fechaHoraCreacion;
     }
 
-    public Seccion getSeccion() {
-        return seccion;
+    public Set<Seccion> getSecciones() {
+        return secciones;
     }
 
-    public void setSeccion(Seccion seccion) {
-        this.seccion = seccion;
+    public void setSecciones(Set<Seccion> secciones) {
+        this.secciones = secciones;
     }
 
     @Override
@@ -99,7 +100,7 @@ public class Pregunta implements Serializable {
             return false;
         }
         Pregunta pregunta = (Pregunta) o;
-        if(pregunta.id == null || id == null) {
+        if (pregunta.id == null || id == null) {
             return false;
         }
         return Objects.equals(id, pregunta.id);

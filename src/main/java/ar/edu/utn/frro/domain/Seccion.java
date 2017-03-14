@@ -2,9 +2,12 @@ package ar.edu.utn.frro.domain;
 
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A Seccion.
@@ -36,6 +39,18 @@ public class Seccion implements Serializable {
     @NotNull
     @JoinColumn(name="seccion_encuesta_id")
     private Encuesta encuesta;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "preguntas_secciones",
+        joinColumns = {
+            @JoinColumn(name = "seccion_id", nullable = false, updatable = false)
+        },
+        inverseJoinColumns = {
+            @JoinColumn(name = "pregunta_id", nullable = false, updatable = false)
+        }
+    )
+    private Set<Pregunta> preguntas = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -75,6 +90,14 @@ public class Seccion implements Serializable {
 
     public void setEncuesta(Encuesta encuesta) {
         this.encuesta = encuesta;
+    }
+
+    public Set<Pregunta> getPreguntas() {
+        return preguntas;
+    }
+
+    public void setPreguntas(Set<Pregunta> preguntas) {
+        this.preguntas = preguntas;
     }
 
     @Override
