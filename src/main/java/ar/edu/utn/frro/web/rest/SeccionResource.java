@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -106,6 +107,7 @@ public class SeccionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Transactional // because of lazy loading
     public ResponseEntity<Set<Seccion>> getSeccionesByEncuesta(@PathVariable Long encuestaId) {
         Encuesta encuesta = encuestaRepository.findOne(encuestaId);
         if (encuesta == null) {
@@ -122,6 +124,7 @@ public class SeccionResource {
     method= RequestMethod.POST,
     produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Transactional // because of lazy loading
     public ResponseEntity<Void> updateSeccionesEncuesta(@Valid @RequestBody Set<Seccion> secciones, @PathVariable Long encuestaId) {
         ResponseEntity<Void> responseEntity = ResponseEntity.ok().build();
         Encuesta found = encuestaRepository.findOne(encuestaId);

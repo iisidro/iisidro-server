@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -143,6 +144,7 @@ public class PreguntaResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Transactional
     public ResponseEntity<Set<Pregunta>> findPreguntasBySeccion(@PathVariable Long seccionId) {
         log.debug("REST request to find all Preguntas by seccion {}", seccionId);
 
@@ -161,6 +163,7 @@ public class PreguntaResource {
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Transactional
     public ResponseEntity<Void> updatePreguntasSection(@Valid @RequestBody Set<Pregunta> preguntas, @PathVariable Long seccionId) throws URISyntaxException {
         ResponseEntity<Void> responseEntity = ResponseEntity.ok().build();
         Seccion seccionFound = seccionRepository.findOne(seccionId);
