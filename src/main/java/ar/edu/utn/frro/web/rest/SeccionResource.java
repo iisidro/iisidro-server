@@ -97,7 +97,7 @@ public class SeccionResource {
     }
 
     /**
-     * GET  /secciones : get all the secciones.
+     * GET  /seccionesByEncuesta/{encuestaId} : get all the secciones for an encuesta.
      *
      * @return the ResponseEntity with status 200 (OK) and the list of secciones in body
      */

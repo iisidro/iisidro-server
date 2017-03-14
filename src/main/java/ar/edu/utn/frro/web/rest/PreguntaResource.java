@@ -1,12 +1,13 @@
 package ar.edu.utn.frro.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import ar.edu.utn.frro.domain.Pregunta;
+import ar.edu.utn.frro.domain.Seccion;
 import ar.edu.utn.frro.repository.PreguntaRepository;
+import ar.edu.utn.frro.repository.SeccionRepository;
 import ar.edu.utn.frro.web.rest.util.HeaderUtil;
+import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * REST controller for managing Pregunta.
@@ -27,10 +29,13 @@ import java.util.Optional;
 public class PreguntaResource {
 
     private final Logger log = LoggerFactory.getLogger(PreguntaResource.class);
-        
+
     @Inject
     private PreguntaRepository preguntaRepository;
-    
+
+    @Inject
+    private SeccionRepository seccionRepository;
+
     /**
      * POST  /preguntas : Create a new pregunta.
      *
@@ -126,6 +131,47 @@ public class PreguntaResource {
         log.debug("REST request to delete Pregunta : {}", id);
         preguntaRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("pregunta", id.toString())).build();
+    }
+
+    /**
+     * GET /preguntas/seccion/{seccionId}
+     *
+     * @param seccionId section id to find related preguntas
+     * @return preguntas list found.
+     */
+    @RequestMapping(value = "/preguntas/seccion/{seccionId}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Set<Pregunta>> findPreguntasBySeccion(@PathVariable Long seccionId) {
+        log.debug("REST request to find all Preguntas by seccion {}", seccionId);
+
+        Seccion seccionFound = seccionRepository.findOne(seccionId);
+        log.debug("found {} number of Preguntas", seccionFound.getPreguntas().size());
+        if (seccionFound == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(
+                seccionFound.getPreguntas(),
+                HttpStatus.OK);
+        }
+    }
+
+    @RequestMapping(value = "/preguntas/seccion/{seccionId}",
+        method = RequestMethod.POST,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Void> updatePreguntasSection(@Valid @RequestBody Set<Pregunta> preguntas, @PathVariable Long seccionId) throws URISyntaxException {
+        ResponseEntity<Void> responseEntity = ResponseEntity.ok().build();
+        Seccion seccionFound = seccionRepository.findOne(seccionId);
+        if (seccionFound == null) {
+            responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            seccionFound.setPreguntas(preguntas);
+            seccionRepository.save(seccionFound);
+        }
+
+        return responseEntity;
     }
 
 }

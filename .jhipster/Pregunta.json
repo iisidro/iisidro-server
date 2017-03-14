@@ -25,7 +25,7 @@
             "fieldValidateRules": []
         }
     ],
-    "changelogDate": "20160802013936",
+    "changelogDate": "20170314102700",
     "dto": "no",
     "service": "no",
     "entityTableName": "pregunta",
