@@ -147,10 +147,10 @@ public class PreguntaResource {
         log.debug("REST request to find all Preguntas by seccion {}", seccionId);
 
         Seccion seccionFound = seccionRepository.findOne(seccionId);
-        log.debug("found {} number of Preguntas", seccionFound.getPreguntas().size());
         if (seccionFound == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
+            log.debug("found {} number of Preguntas", seccionFound.getPreguntas().size());
             return new ResponseEntity<>(
                 seccionFound.getPreguntas(),
                 HttpStatus.OK);

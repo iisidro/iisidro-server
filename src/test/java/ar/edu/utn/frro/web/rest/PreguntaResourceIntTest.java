@@ -1,7 +1,6 @@
 package ar.edu.utn.frro.web.rest;
 
 import ar.edu.utn.frro.Application;
-import ar.edu.utn.frro.domain.Encuesta;
 import ar.edu.utn.frro.domain.Pregunta;
 import ar.edu.utn.frro.domain.Seccion;
 import ar.edu.utn.frro.domain.TipoPregunta;
@@ -34,6 +33,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -99,15 +99,11 @@ public class PreguntaResourceIntTest {
         tipoPregunta.setNombre(TIPO_PREGUNTA_NOMBRE);
         tipoPreguntaRepository.save(tipoPregunta);
 
-        Encuesta encuesta = new Encuesta();
-        encuesta.setNombre("Un Numbre");
-        encuesta = encuestaRepository.save(encuesta);
-
         seccionPregunta = new Seccion();
         seccionPregunta.setNombre(SECCION_PREGUNTA_NOMBRE);
         seccionPregunta.setCodigo(SECCION_PREGUNTA_CODIGO);
         seccionPregunta.setOrden(1);
-        seccionPregunta.setEncuesta(encuesta);
+
         seccionPregunta = seccionRepository.save(seccionPregunta);
         assertThat(seccionPregunta.getId()).isNotNull();
     }
@@ -303,7 +299,8 @@ public class PreguntaResourceIntTest {
         restPreguntaMockMvc.perform(get("/api/preguntas/seccion/{seccionId}?sort=id,desc", seccionPregunta.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.[*]").isNotEmpty());
+            .andExpect(jsonPath("$.[*]").isNotEmpty())
+            .andExpect(jsonPath("$.[*]").value(hasSize(preguntas.size())));
     }
 
     @Test
@@ -394,9 +391,11 @@ public class PreguntaResourceIntTest {
         seccionRepository.flush();
         seccionRepository.save(seccionPregunta);
 
-        restPreguntaMockMvc.perform(post("/api/preguntas/seccion/{id}", seccionPregunta.getId())
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(updatePreguntas)))
+        restPreguntaMockMvc.perform(
+                post("/api/preguntas/seccion/{id}", seccionPregunta.getId())
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(updatePreguntas))
+            )
             .andExpect(status().isOk());
 
         // validate over the database

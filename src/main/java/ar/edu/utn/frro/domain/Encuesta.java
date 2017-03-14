@@ -2,10 +2,12 @@ package ar.edu.utn.frro.domain;
 
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A Encuesta.
@@ -26,6 +28,18 @@ public class Encuesta implements Serializable {
 
     @Column(name = "fecha_hora_creacion")
     private Date fechaHoraCreacion;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "secciones_encuestas",
+        joinColumns = {
+            @JoinColumn(name = "encuesta_id", nullable = false, updatable = false)
+        },
+        inverseJoinColumns = {
+            @JoinColumn(name = "seccion_id", nullable = false, updatable = false)
+        }
+    )
+    private Set<Seccion> secciones = new HashSet<>();
 
     public Encuesta() {
         // this can be modified to use different server date timezone as needed
@@ -54,6 +68,14 @@ public class Encuesta implements Serializable {
 
     public void setFechaHoraCreacion(Date fechaHoraCreacion) {
         this.fechaHoraCreacion = fechaHoraCreacion;
+    }
+
+    public Set<Seccion> getSecciones() {
+        return secciones;
+    }
+
+    public void setSecciones(Set<Seccion> secciones) {
+        this.secciones = secciones;
     }
 
     @Override

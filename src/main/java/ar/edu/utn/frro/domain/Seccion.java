@@ -35,11 +35,6 @@ public class Seccion implements Serializable {
     @Column(name = "nombre", length = 255, nullable = false)
     private String nombre;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name="seccion_encuesta_id")
-    private Encuesta encuesta;
-
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
         name = "preguntas_secciones",
@@ -51,6 +46,9 @@ public class Seccion implements Serializable {
         }
     )
     private Set<Pregunta> preguntas = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "secciones")
+    private Set<Encuesta> encuestas = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -84,20 +82,20 @@ public class Seccion implements Serializable {
         this.nombre = nombre;
     }
 
-    public Encuesta getEncuesta() {
-        return encuesta;
-    }
-
-    public void setEncuesta(Encuesta encuesta) {
-        this.encuesta = encuesta;
-    }
-
     public Set<Pregunta> getPreguntas() {
         return preguntas;
     }
 
     public void setPreguntas(Set<Pregunta> preguntas) {
         this.preguntas = preguntas;
+    }
+
+    public Set<Encuesta> getEncuestas() {
+        return encuestas;
+    }
+
+    public void setEncuestas(Set<Encuesta> encuestas) {
+        this.encuestas = encuestas;
     }
 
     @Override
