@@ -29,6 +29,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -94,10 +95,12 @@ public class SeccionResourceIntTest {
         int databaseSizeBeforeCreate = seccionRepository.findAll().size();
 
         // Create the Seccion
-        restSeccionMockMvc.perform(post("/api/secciones")
+        restSeccionMockMvc.perform(
+                post("/api/secciones")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(seccion)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated()
+                );
 
         // Validate the Seccion in the database
         List<Seccion> secciones = seccionRepository.findAll();
@@ -158,46 +161,6 @@ public class SeccionResourceIntTest {
                 .andExpect(jsonPath("$.[*].orden").value(hasItem(DEFAULT_ORDEN)))
                 .andExpect(jsonPath("$.[*].codigo").value(hasItem(DEFAULT_CODIGO.toString())))
                 .andExpect(jsonPath("$.[*].nombre").value(hasItem(DEFAULT_NOMBRE.toString())));
-    }
-
-    @Test
-    @Transactional
-    public void getAllSeccionesByEncuesta() throws Exception {
-        // Initialize the database
-        seccionRepository.saveAndFlush(seccion);
-        Set<Seccion> secciones = new HashSet<>();
-        secciones.add(seccion);
-
-        Encuesta encuestaWithSeccion = new Encuesta();
-        encuestaWithSeccion.setNombre("Test With seccion");
-        encuestaWithSeccion.setSecciones(secciones);
-
-        encuestaWithSeccion = encuestaRepository.save(encuestaWithSeccion);
-
-        // Get all the secciones by encuesta
-        restSeccionMockMvc.perform(get("/api/secciones/encuesta/"+encuestaWithSeccion.getId()+"?sort=id,desc"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(seccion.getId().intValue())))
-            .andExpect(jsonPath("$.[*].orden").value(hasItem(DEFAULT_ORDEN)))
-            .andExpect(jsonPath("$.[*].codigo").value(hasItem(DEFAULT_CODIGO.toString())))
-            .andExpect(jsonPath("$.[*].nombre").value(hasItem(DEFAULT_NOMBRE.toString())));
-    }
-
-    @Test
-    @Transactional
-    public void getNoSeccionByEncuesta() throws Exception {
-        // Initialize the database
-        Encuesta encuestaWithoutSeccion = new Encuesta();
-        encuestaWithoutSeccion.setNombre("Test With seccion");
-
-        encuestaWithoutSeccion = encuestaRepository.save(encuestaWithoutSeccion);
-
-        // Get all the secciones by encuesta
-        restSeccionMockMvc.perform(get("/api/secciones/encuesta/"+encuestaWithoutSeccion.getId()+"?sort=id,desc"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.[*]").isEmpty());
     }
 
     @Test
@@ -266,5 +229,203 @@ public class SeccionResourceIntTest {
         // Validate the database is empty
         List<Seccion> secciones = seccionRepository.findAll();
         assertThat(secciones).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    @Test
+    @Transactional
+    public void getNoSeccionByEncuesta() throws Exception {
+        // Initialize the database
+        Encuesta encuestaWithoutSeccion = new Encuesta();
+        encuestaWithoutSeccion.setNombre("Test With seccion");
+
+        encuestaWithoutSeccion = encuestaRepository.save(encuestaWithoutSeccion);
+
+        // Get all the secciones by encuesta
+        restSeccionMockMvc.perform(get("/api/secciones/encuesta/"+encuestaWithoutSeccion.getId()+"?sort=id,desc"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*]").isEmpty());
+    }
+
+    @Test
+    @Transactional
+    public void getOneSeccionByEncuesta() throws Exception {
+        // Initialize the database
+        seccionRepository.saveAndFlush(seccion);
+        Set<Seccion> secciones = new HashSet<>();
+        secciones.add(seccion);
+
+        Encuesta encuestaWithSeccion = new Encuesta();
+        encuestaWithSeccion.setNombre("Test With seccion");
+        encuestaWithSeccion.setSecciones(secciones);
+
+        encuestaWithSeccion = encuestaRepository.save(encuestaWithSeccion);
+
+        // Get all the secciones by encuesta
+        restSeccionMockMvc.perform(get("/api/secciones/encuesta/"+encuestaWithSeccion.getId()+"?sort=id,desc"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(seccion.getId().intValue())))
+            .andExpect(jsonPath("$.[*].orden").value(hasItem(DEFAULT_ORDEN)))
+            .andExpect(jsonPath("$.[*].codigo").value(hasItem(DEFAULT_CODIGO.toString())))
+            .andExpect(jsonPath("$.[*].nombre").value(hasItem(DEFAULT_NOMBRE.toString())));
+    }
+
+    @Test
+    @Transactional
+    public void getManySeccionesByEncuesta() throws Exception {
+        // Initialize the database
+        Seccion secondSeccion = new Seccion();
+        secondSeccion.setNombre("Segunda");
+        secondSeccion.setOrden(2);
+        secondSeccion.setCodigo("12345");
+
+        seccionRepository.saveAndFlush(seccion);
+        seccionRepository.saveAndFlush(secondSeccion);
+        Set<Seccion> secciones = new HashSet<>();
+        secciones.add(seccion);
+        secciones.add(secondSeccion);
+
+        Encuesta encuestaWithSeccion = new Encuesta();
+        encuestaWithSeccion.setNombre("Test With several seccion");
+        encuestaWithSeccion.setSecciones(secciones);
+
+        encuestaWithSeccion = encuestaRepository.save(encuestaWithSeccion);
+
+        // Get all the secciones by encuesta
+        restSeccionMockMvc.perform(get("/api/secciones/encuesta/"+encuestaWithSeccion.getId()+"?sort=id,desc"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*]").isNotEmpty())
+            .andExpect(jsonPath("$.[*]").isArray())
+            .andExpect(jsonPath("$.[*]").value(hasSize(secciones.size())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(seccion.getId().intValue())))
+            .andExpect(jsonPath("$.[*].orden").value(hasItem(DEFAULT_ORDEN)))
+            .andExpect(jsonPath("$.[*].codigo").value(hasItem(DEFAULT_CODIGO)))
+            .andExpect(jsonPath("$.[*].nombre").value(hasItem(DEFAULT_NOMBRE)))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(secondSeccion.getId().intValue())))
+            .andExpect(jsonPath("$.[*].orden").value(hasItem(secondSeccion.getOrden())))
+            .andExpect(jsonPath("$.[*].codigo").value(hasItem(secondSeccion.getCodigo())))
+            .andExpect(jsonPath("$.[*].nombre").value(hasItem(secondSeccion.getNombre())));
+    }
+
+    @Test
+    @Transactional
+    public void setSeccionInEncuesta() throws Exception {
+        // Initialize the database
+        Seccion seccion = new Seccion();
+        seccion.setNombre("Single");
+        seccion.setOrden(1);
+        seccion.setCodigo("54321");
+
+        seccionRepository.saveAndFlush(seccion);
+        Set<Seccion> secciones = new HashSet<>();
+        secciones.add(seccion);
+
+        Encuesta encuesta = new Encuesta();
+        encuesta.setNombre("Setting one section");
+
+        encuesta = encuestaRepository.save(encuesta);
+
+        // call post secciones
+        restSeccionMockMvc.perform(
+                post("/api/secciones/encuesta/{id}", encuesta.getId())
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(secciones))
+            ).andExpect(status().isOk());
+
+        // assert
+        Encuesta updated = encuestaRepository.findOne(encuesta.getId());
+        assertThat(updated.getSecciones()).isNotEmpty();
+        assertThat(updated.getSecciones()).hasSize(1);
+    }
+
+    @Test
+    @Transactional
+    public void setSeccionesInEncuesta() throws Exception {
+        // Initialize the database
+        Seccion seccion = new Seccion();
+        seccion.setNombre("Single");
+        seccion.setOrden(1);
+        seccion.setCodigo("54321");
+
+        seccionRepository.saveAndFlush(seccion);
+        Seccion seccion2 = new Seccion();
+        seccion2.setNombre("Multiple");
+        seccion2.setOrden(2);
+        seccion2.setCodigo("521");
+
+        seccionRepository.saveAndFlush(seccion2);
+        Set<Seccion> secciones = new HashSet<>();
+        secciones.add(seccion);
+        secciones.add(seccion2);
+
+        Encuesta encuesta = new Encuesta();
+        encuesta.setNombre("Setting two sections");
+
+        encuesta = encuestaRepository.save(encuesta);
+
+        // call post secciones
+        restSeccionMockMvc.perform(
+            post("/api/secciones/encuesta/{id}", encuesta.getId())
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(secciones))
+        ).andExpect(status().isOk());
+
+        // assert
+        Encuesta updated = encuestaRepository.findOne(encuesta.getId());
+        assertThat(updated.getSecciones()).isNotEmpty();
+        assertThat(updated.getSecciones()).hasSize(2);
+    }
+
+    @Test
+    @Transactional
+    public void updateToNoSeccionsInEncuesta() throws Exception {
+        // Initialize the database
+        Seccion seccion = new Seccion();
+        seccion.setNombre("Single");
+        seccion.setOrden(1);
+        seccion.setCodigo("54321");
+
+        seccionRepository.saveAndFlush(seccion);
+        Seccion seccion2 = new Seccion();
+        seccion2.setNombre("Multiple");
+        seccion2.setOrden(2);
+        seccion2.setCodigo("521");
+
+        seccionRepository.saveAndFlush(seccion2);
+        Set<Seccion> secciones = new HashSet<>();
+        secciones.add(seccion);
+        secciones.add(seccion2);
+
+        Encuesta encuesta = new Encuesta();
+        encuesta.setNombre("Setting two sections");
+
+        encuesta = encuestaRepository.save(encuesta);
+
+        // call post secciones
+        restSeccionMockMvc.perform(
+            post("/api/secciones/encuesta/{id}", encuesta.getId())
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(secciones))
+        ).andExpect(status().isOk());
+
+        // assert
+        Encuesta updated = encuestaRepository.findOne(encuesta.getId());
+        assertThat(updated.getSecciones()).isNotEmpty();
+        assertThat(updated.getSecciones()).hasSize(2);
+
+        encuesta = encuestaRepository.save(encuesta);
+
+        // call post secciones
+        restSeccionMockMvc.perform(
+            post("/api/secciones/encuesta/{id}", encuesta.getId())
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(new HashSet<>()))
+        ).andExpect(status().isOk());
+
+        // assert
+        updated = encuestaRepository.findOne(encuesta.getId());
+        assertThat(updated.getSecciones()).isEmpty();
     }
 }

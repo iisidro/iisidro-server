@@ -127,8 +127,6 @@ public class SeccionResource {
         Encuesta found = encuestaRepository.findOne(encuestaId);
         if (found == null) {
             responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else if (secciones == null || secciones.isEmpty()) {
-            responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             found.setSecciones(secciones);
             encuestaRepository.save(found);
