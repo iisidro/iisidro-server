@@ -30,6 +30,10 @@ public class Pregunta implements Serializable {
     @ManyToOne
     private TipoPregunta tipo;
 
+    @ManyToOne
+    @JoinColumn(name="pregunta_seccion_id")
+    private Seccion seccion;
+
     @Column(name = "fecha_hora_creacion")
     private Date fechaHoraCreacion;
 
@@ -76,6 +80,14 @@ public class Pregunta implements Serializable {
 
     public void setFechaHoraCreacion(Date fechaHoraCreacion) {
         this.fechaHoraCreacion = fechaHoraCreacion;
+    }
+
+    public Seccion getSeccion() {
+        return seccion;
+    }
+
+    public void setSeccion(Seccion seccion) {
+        this.seccion = seccion;
     }
 
     @Override
