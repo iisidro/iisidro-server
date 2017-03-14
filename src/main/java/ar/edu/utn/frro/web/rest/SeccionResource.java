@@ -105,10 +105,8 @@ public class SeccionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public List<Seccion> getAllSeccionesByEncuesta(@PathVariable Long encuestaId) {
-        log.debug("REST request to get all secciones by encuesta id {}", encuestaId);
-        List<Seccion> secciones = seccionRepository.findAllByEncuesta(encuestaId);
-        return secciones;
+    public List<Seccion> getSeccionesByEncuesta(@PathVariable Long encuestaId) {
+        throw new UnsupportedOperationException("fanky10: getAllSeccionesByEncuesta");
     }
 
     @RequestMapping(value = "/secciones/encuesta/{encuestaId}",
@@ -126,6 +124,7 @@ public class SeccionResource {
             for (Seccion seccion: secciones) {
                 // delete previous relationships + add new one.
                 // todo: add corresponding secciones_encuesta relationship
+                throw new UnsupportedOperationException("fanky10: updateSeccionesEncuesta");
             }
         }
 

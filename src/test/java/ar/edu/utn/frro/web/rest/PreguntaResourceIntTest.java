@@ -1,7 +1,6 @@
 package ar.edu.utn.frro.web.rest;
 
 import ar.edu.utn.frro.Application;
-import ar.edu.utn.frro.domain.Encuesta;
 import ar.edu.utn.frro.domain.Pregunta;
 import ar.edu.utn.frro.domain.Seccion;
 import ar.edu.utn.frro.domain.TipoPregunta;
@@ -99,15 +98,11 @@ public class PreguntaResourceIntTest {
         tipoPregunta.setNombre(TIPO_PREGUNTA_NOMBRE);
         tipoPreguntaRepository.save(tipoPregunta);
 
-        Encuesta encuesta = new Encuesta();
-        encuesta.setNombre("Un Numbre");
-        encuesta = encuestaRepository.save(encuesta);
-
         seccionPregunta = new Seccion();
         seccionPregunta.setNombre(SECCION_PREGUNTA_NOMBRE);
         seccionPregunta.setCodigo(SECCION_PREGUNTA_CODIGO);
         seccionPregunta.setOrden(1);
-        seccionPregunta.setEncuesta(encuesta);
+
         seccionPregunta = seccionRepository.save(seccionPregunta);
         assertThat(seccionPregunta.getId()).isNotNull();
     }

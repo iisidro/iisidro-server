@@ -88,7 +88,6 @@ public class SeccionResourceIntTest {
         seccion.setOrden(DEFAULT_ORDEN);
         seccion.setCodigo(DEFAULT_CODIGO);
         seccion.setNombre(DEFAULT_NOMBRE);
-        seccion.setEncuesta(encuestaPadre);
     }
 
     @Test

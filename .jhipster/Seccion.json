@@ -1,14 +1,5 @@
 {
     "relationships": [
-        {
-            "relationshipName": "seccion_encuesta",
-            "otherEntityName": "encuesta",
-            "relationshipType": "many-to-one",
-            "relationshipValidateRules": [
-                "required"
-            ],
-            "otherEntityField": "id"
-        }
     ],
     "fields": [
         {
@@ -35,7 +26,7 @@
             "fieldValidateRulesMaxlength": "255"
         }
     ],
-    "changelogDate": "20160908220902",
+    "changelogDate": "20170314123300",
     "dto": "no",
     "service": "no",
     "entityTableName": "seccion",

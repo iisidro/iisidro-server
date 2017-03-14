@@ -35,11 +35,6 @@ public class Seccion implements Serializable {
     @Column(name = "nombre", length = 255, nullable = false)
     private String nombre;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name="seccion_encuesta_id")
-    private Encuesta encuesta;
-
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
         name = "preguntas_secciones",
@@ -82,14 +77,6 @@ public class Seccion implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public Encuesta getEncuesta() {
-        return encuesta;
-    }
-
-    public void setEncuesta(Encuesta encuesta) {
-        this.encuesta = encuesta;
     }
 
     public Set<Pregunta> getPreguntas() {
