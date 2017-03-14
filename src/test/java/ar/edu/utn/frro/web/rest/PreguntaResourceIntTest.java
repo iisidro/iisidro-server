@@ -318,21 +318,11 @@ public class PreguntaResourceIntTest {
 
     @Test
     @Transactional
-    public void updatePreguntasSeccionWithInvalidContent() throws Exception {
-        List<Pregunta> preguntas = new ArrayList<>();
-        restPreguntaMockMvc.perform(post("/api/preguntas/seccion/{id}", seccionPregunta.getId())
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(preguntas)))
-            .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @Transactional
-    public void updatePreguntasSeccion() throws Exception {
+    public void setPreguntasSeccion() throws Exception {
         // save with no seccion
         preguntaRepository.saveAndFlush(pregunta);
 
-        List<Pregunta> preguntas = new ArrayList<>();
+        Set<Pregunta> preguntas = new HashSet<>();
         preguntas.add(pregunta);
 
         restPreguntaMockMvc.perform(post("/api/preguntas/seccion/{id}", seccionPregunta.getId())
@@ -344,5 +334,74 @@ public class PreguntaResourceIntTest {
         Pregunta testPregunta = preguntaRepository.findOne(pregunta.getId());
         assertThat(testPregunta.getNombre()).isEqualTo(DEFAULT_NOMBRE);
         assertThat(testPregunta.getInformacion()).isEqualTo(DEFAULT_INFORMACION);
+
+        Seccion seccion = seccionRepository.findOne(seccionPregunta.getId());
+        Set<Pregunta> preguntasFound = seccion.getPreguntas();
+        assertThat(preguntasFound).isNotEmpty();
+        assertThat(preguntasFound).hasSize(1);
+    }
+
+    @Test
+    @Transactional
+    public void updatePreguntasSeccion() throws Exception {
+        // set only one pregunta
+        setPreguntasSeccion();
+
+        // update with different preguntas
+        Pregunta pregunta = new Pregunta();
+        pregunta.setId(this.pregunta.getId());
+        pregunta.setNombre(UPDATED_NOMBRE);
+        pregunta.setInformacion(UPDATED_INFORMACION);
+
+        Pregunta secondPregunta = new Pregunta();
+        secondPregunta.setNombre("Seccionada");
+        secondPregunta.setInformacion("mucha seccion wow");
+
+        preguntaRepository.flush();
+        preguntaRepository.save(pregunta);
+        preguntaRepository.save(secondPregunta);
+
+        Set<Pregunta> updatePreguntas = new HashSet<>();
+        updatePreguntas.add(pregunta);
+        updatePreguntas.add(secondPregunta);
+
+        seccionPregunta.setPreguntas(updatePreguntas);
+        seccionRepository.flush();
+        seccionRepository.save(seccionPregunta);
+
+        restPreguntaMockMvc.perform(post("/api/preguntas/seccion/{id}", seccionPregunta.getId())
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(updatePreguntas)))
+            .andExpect(status().isOk());
+
+        // validate over the database
+        Seccion seccionUpdated = seccionRepository.findOne(seccionPregunta.getId());
+        Set<Pregunta> preguntasUpdated = seccionUpdated.getPreguntas();
+        assertThat(preguntasUpdated).isNotEmpty();
+        assertThat(preguntasUpdated).hasSize(2);
+    }
+
+    @Test
+    @Transactional
+    public void updateNoPreguntasSeccion() throws Exception {
+        // set only one pregunta
+        setPreguntasSeccion();
+
+        // update with no preguntas, such as deleting data
+        Set<Pregunta> updatePreguntas = new HashSet<>();
+
+        seccionPregunta.setPreguntas(updatePreguntas);
+        seccionRepository.flush();
+        seccionRepository.save(seccionPregunta);
+
+        restPreguntaMockMvc.perform(post("/api/preguntas/seccion/{id}", seccionPregunta.getId())
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(updatePreguntas)))
+            .andExpect(status().isOk());
+
+        // validate over the database
+        Seccion seccionUpdated = seccionRepository.findOne(seccionPregunta.getId());
+        Set<Pregunta> preguntasUpdated = seccionUpdated.getPreguntas();
+        assertThat(preguntasUpdated).isEmpty();
     }
 }

@@ -161,15 +161,14 @@ public class PreguntaResource {
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Void> updatePreguntasSection(@Valid @RequestBody List<Pregunta> preguntas, @PathVariable Long seccionId) throws URISyntaxException {
+    public ResponseEntity<Void> updatePreguntasSection(@Valid @RequestBody Set<Pregunta> preguntas, @PathVariable Long seccionId) throws URISyntaxException {
         ResponseEntity<Void> responseEntity = ResponseEntity.ok().build();
         Seccion seccionFound = seccionRepository.findOne(seccionId);
         if (seccionFound == null) {
             responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else if (preguntas == null || preguntas.isEmpty()){
-            responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            throw new UnsupportedOperationException("updatePreguntasSection not supported yet");
+            seccionFound.setPreguntas(preguntas);
+            seccionRepository.save(seccionFound);
         }
 
         return responseEntity;
