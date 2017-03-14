@@ -144,8 +144,9 @@ public class PreguntaResource {
     @Timed
     public List<Pregunta> findPreguntasBySeccion(@PathVariable Long seccionId) {
         log.debug("REST request to find all Preguntas by seccion {}", seccionId);
-        List<Pregunta> preguntas = preguntaRepository.findAllBySeccion(seccionId);
-        return preguntas;
+//        List<Pregunta> preguntas = preguntaRepository.findAllBySeccion(seccionId);
+//        return preguntas;
+        throw new UnsupportedOperationException(" findPreguntasBySeccion not supported yet");
     }
 
     @RequestMapping(value = "/preguntas/seccion/{seccionId}",
@@ -160,10 +161,7 @@ public class PreguntaResource {
         } else if (preguntas == null || preguntas.isEmpty()){
             responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            for (Pregunta pregunta: preguntas) {
-                pregunta.setSeccion(seccionFound);
-                preguntaRepository.save(pregunta);
-            }
+            throw new UnsupportedOperationException("updatePreguntasSection not supported yet");
         }
 
         return responseEntity;

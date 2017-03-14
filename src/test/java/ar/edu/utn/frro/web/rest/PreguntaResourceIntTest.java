@@ -7,22 +7,17 @@ import ar.edu.utn.frro.domain.Seccion;
 import ar.edu.utn.frro.domain.TipoPregunta;
 import ar.edu.utn.frro.repository.EncuestaRepository;
 import ar.edu.utn.frro.repository.PreguntaRepository;
-
 import ar.edu.utn.frro.repository.SeccionRepository;
 import ar.edu.utn.frro.repository.TipoPreguntaRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.hamcrest.Matchers.hasItem;
-
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -36,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -120,7 +116,6 @@ public class PreguntaResourceIntTest {
         pregunta.setNombre(DEFAULT_NOMBRE);
         pregunta.setInformacion(DEFAULT_INFORMACION);
         pregunta.setTipo(tipoPregunta);
-        pregunta.setSeccion(seccionPregunta);
     }
 
     @Test
@@ -132,24 +127,17 @@ public class PreguntaResourceIntTest {
 
         assertThat(testPregunta.getTipo()).isNotNull();
         assertThat(testPregunta.getTipo().getNombre()).isEqualTo(TIPO_PREGUNTA_NOMBRE);
-
-        assertThat(testPregunta.getSeccion()).isNotNull();
-        assertThat(testPregunta.getSeccion().getNombre()).isEqualTo(SECCION_PREGUNTA_NOMBRE);
-        assertThat(testPregunta.getSeccion().getCodigo()).isEqualTo(SECCION_PREGUNTA_CODIGO);
     }
 
     @Test
     @Transactional
     public void createPreguntaWithNoSeccion() throws Exception {
-        pregunta.setSeccion(null);
         Pregunta testPregunta = createPregunta(pregunta);
         assertThat(testPregunta.getNombre()).isEqualTo(DEFAULT_NOMBRE);
         assertThat(testPregunta.getInformacion()).isEqualTo(DEFAULT_INFORMACION);
 
         assertThat(testPregunta.getTipo()).isNotNull();
         assertThat(testPregunta.getTipo().getNombre()).isEqualTo(TIPO_PREGUNTA_NOMBRE);
-
-        assertThat(testPregunta.getSeccion()).isNull();
     }
 
     private Pregunta createPregunta(Pregunta pregunta) throws Exception {
@@ -245,7 +233,6 @@ public class PreguntaResourceIntTest {
         Pregunta testPregunta = preguntas.get(preguntas.size() - 1);
         assertThat(testPregunta.getNombre()).isEqualTo(UPDATED_NOMBRE);
         assertThat(testPregunta.getInformacion()).isEqualTo(UPDATED_INFORMACION);
-        assertThat(testPregunta.getSeccion()).isNull();
     }
 
     @Test
@@ -311,7 +298,6 @@ public class PreguntaResourceIntTest {
     @Transactional
     public void updatePreguntasSeccion() throws Exception {
         // save with no seccion
-        pregunta.setSeccion(null);
         preguntaRepository.saveAndFlush(pregunta);
 
         List<Pregunta> preguntas = new ArrayList<>();
@@ -326,7 +312,5 @@ public class PreguntaResourceIntTest {
         Pregunta testPregunta = preguntaRepository.findOne(pregunta.getId());
         assertThat(testPregunta.getNombre()).isEqualTo(DEFAULT_NOMBRE);
         assertThat(testPregunta.getInformacion()).isEqualTo(DEFAULT_INFORMACION);
-        assertThat(testPregunta.getSeccion()).isNotNull();
-        assertThat(testPregunta.getSeccion().getId()).isEqualTo(seccionPregunta.getId());
     }
 }
