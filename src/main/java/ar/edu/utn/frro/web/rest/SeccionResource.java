@@ -1,12 +1,13 @@
 package ar.edu.utn.frro.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
+import ar.edu.utn.frro.domain.Encuesta;
 import ar.edu.utn.frro.domain.Seccion;
+import ar.edu.utn.frro.repository.EncuestaRepository;
 import ar.edu.utn.frro.repository.SeccionRepository;
 import ar.edu.utn.frro.web.rest.util.HeaderUtil;
+import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,9 @@ public class SeccionResource {
 
     @Inject
     private SeccionRepository seccionRepository;
+
+    @Inject
+    private EncuestaRepository encuestaRepository;
 
     /**
      * POST  /secciones : Create a new seccion.
@@ -97,7 +101,7 @@ public class SeccionResource {
      *
      * @return the ResponseEntity with status 200 (OK) and the list of secciones in body
      */
-    @RequestMapping(value = "/seccionesByEncuesta/{encuestaId}",
+    @RequestMapping(value = "/secciones/encuesta/{encuestaId}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
@@ -105,6 +109,27 @@ public class SeccionResource {
         log.debug("REST request to get all secciones by encuesta id {}", encuestaId);
         List<Seccion> secciones = seccionRepository.findAllByEncuesta(encuestaId);
         return secciones;
+    }
+
+    @RequestMapping(value = "/secciones/encuesta/{encuestaId}",
+    method= RequestMethod.POST,
+    produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Void> updateSeccionesEncuesta(@Valid @RequestBody List<Seccion> secciones, @PathVariable Long encuestaId) {
+        ResponseEntity<Void> responseEntity = ResponseEntity.ok().build();
+        Encuesta found = encuestaRepository.findOne(encuestaId);
+        if (found == null) {
+            responseEntity = new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+        } else if (secciones == null || secciones.isEmpty()) {
+            responseEntity = new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+        } else {
+            for (Seccion seccion: secciones) {
+                // delete previous relationships + add new one.
+                // todo: add corresponding secciones_encuesta relationship
+            }
+        }
+
+        return responseEntity;
     }
 
     /**
