@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * REST controller for managing Seccion.
@@ -105,27 +106,32 @@ public class SeccionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public List<Seccion> getSeccionesByEncuesta(@PathVariable Long encuestaId) {
-        throw new UnsupportedOperationException("fanky10: getAllSeccionesByEncuesta");
+    public ResponseEntity<Set<Seccion>> getSeccionesByEncuesta(@PathVariable Long encuestaId) {
+        Encuesta encuesta = encuestaRepository.findOne(encuestaId);
+        if (encuesta == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            log.debug("found {} number of Secciones", encuesta.getSecciones().size());
+            return new ResponseEntity<>(
+                encuesta.getSecciones(),
+                HttpStatus.OK);
+        }
     }
 
     @RequestMapping(value = "/secciones/encuesta/{encuestaId}",
     method= RequestMethod.POST,
     produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Void> updateSeccionesEncuesta(@Valid @RequestBody List<Seccion> secciones, @PathVariable Long encuestaId) {
+    public ResponseEntity<Void> updateSeccionesEncuesta(@Valid @RequestBody Set<Seccion> secciones, @PathVariable Long encuestaId) {
         ResponseEntity<Void> responseEntity = ResponseEntity.ok().build();
         Encuesta found = encuestaRepository.findOne(encuestaId);
         if (found == null) {
-            responseEntity = new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+            responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else if (secciones == null || secciones.isEmpty()) {
-            responseEntity = new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+            responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            for (Seccion seccion: secciones) {
-                // delete previous relationships + add new one.
-                // todo: add corresponding secciones_encuesta relationship
-                throw new UnsupportedOperationException("fanky10: updateSeccionesEncuesta");
-            }
+            found.setSecciones(secciones);
+            encuestaRepository.save(found);
         }
 
         return responseEntity;

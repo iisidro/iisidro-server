@@ -47,6 +47,9 @@ public class Seccion implements Serializable {
     )
     private Set<Pregunta> preguntas = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "secciones")
+    private Set<Encuesta> encuestas = new HashSet<>();
+
     public Long getId() {
         return id;
     }
@@ -85,6 +88,14 @@ public class Seccion implements Serializable {
 
     public void setPreguntas(Set<Pregunta> preguntas) {
         this.preguntas = preguntas;
+    }
+
+    public Set<Encuesta> getEncuestas() {
+        return encuestas;
+    }
+
+    public void setEncuestas(Set<Encuesta> encuestas) {
+        this.encuestas = encuestas;
     }
 
     @Override
