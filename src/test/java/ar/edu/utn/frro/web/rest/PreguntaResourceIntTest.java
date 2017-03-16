@@ -8,6 +8,7 @@ import ar.edu.utn.frro.repository.EncuestaRepository;
 import ar.edu.utn.frro.repository.PreguntaRepository;
 import ar.edu.utn.frro.repository.SeccionRepository;
 import ar.edu.utn.frro.repository.TipoPreguntaRepository;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -114,6 +115,7 @@ public class PreguntaResourceIntTest {
         pregunta.setNombre(DEFAULT_NOMBRE);
         pregunta.setInformacion(DEFAULT_INFORMACION);
         pregunta.setTipo(tipoPregunta);
+        pregunta.setRequerida(true);
     }
 
     @Test
@@ -125,17 +127,7 @@ public class PreguntaResourceIntTest {
 
         assertThat(testPregunta.getTipo()).isNotNull();
         assertThat(testPregunta.getTipo().getNombre()).isEqualTo(TIPO_PREGUNTA_NOMBRE);
-    }
-
-    @Test
-    @Transactional
-    public void createPreguntaWithNoSeccion() throws Exception {
-        Pregunta testPregunta = createPregunta(pregunta);
-        assertThat(testPregunta.getNombre()).isEqualTo(DEFAULT_NOMBRE);
-        assertThat(testPregunta.getInformacion()).isEqualTo(DEFAULT_INFORMACION);
-
-        assertThat(testPregunta.getTipo()).isNotNull();
-        assertThat(testPregunta.getTipo().getNombre()).isEqualTo(TIPO_PREGUNTA_NOMBRE);
+        assertThat(testPregunta.getRequerida()).isEqualTo(Boolean.TRUE);
     }
 
     private Pregunta createPregunta(Pregunta pregunta) throws Exception {
@@ -196,7 +188,8 @@ public class PreguntaResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(pregunta.getId().intValue()))
             .andExpect(jsonPath("$.nombre").value(DEFAULT_NOMBRE.toString()))
-            .andExpect(jsonPath("$.informacion").value(DEFAULT_INFORMACION.toString()));
+            .andExpect(jsonPath("$.informacion").value(DEFAULT_INFORMACION.toString()))
+            .andExpect(jsonPath("$.requerida").value(Boolean.TRUE));
     }
 
     @Test

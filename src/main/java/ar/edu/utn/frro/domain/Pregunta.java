@@ -38,6 +38,10 @@ public class Pregunta implements Serializable {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "preguntas")
     private Set<Seccion> secciones = new HashSet<>();
 
+    @NotNull
+    @Column(name = "requerida", nullable = false)
+    private Boolean requerida = false;
+
     public Pregunta() {
         // this can be modified by a DatetimeUtils and change by timezone and such
         this.fechaHoraCreacion = new Date();
@@ -89,6 +93,14 @@ public class Pregunta implements Serializable {
 
     public void setSecciones(Set<Seccion> secciones) {
         this.secciones = secciones;
+    }
+
+    public Boolean getRequerida() {
+        return requerida;
+    }
+
+    public void setRequerida(Boolean requerida) {
+        this.requerida = requerida;
     }
 
     @Override
