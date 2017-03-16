@@ -9,7 +9,7 @@
     -->
     <changeSet id="20170315212100-1" author="fanky">
         <addColumn tableName="pregunta">
-            <column name="requerida" type="boolean" valueBoolean="false">
+            <column name="requerida" type="boolean" valueBoolean="false" defaultValueBoolean="false">
                 <constraints nullable="false" />
             </column>
         </addColumn>
